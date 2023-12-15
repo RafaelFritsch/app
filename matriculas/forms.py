@@ -195,10 +195,10 @@ class CustomUserCreationForm(UserCreationForm):
         
     
 NUMERO_PROC_CHOICES = (
-    (51, '51'),
-    (52, '52'),
-    (53, '53'),
-    (54, '54'),
+    ('51', '51'),
+    ('52', '52'),
+    ('53', '53'),
+    ('54', '54'),
 
     )   
     

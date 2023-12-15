@@ -173,7 +173,14 @@ class UserProfile(models.Model):
 
 class cad_processo(models.Model):
     
-    numero_processo =  models.CharField(max_length=2)
+    NUMERO_PROCESSO_CHOICES = (
+    ('51', '51'),
+    ('52', '52'),
+    ('53', '53'),
+    ('54', '54'),
+    )   
+    
+    numero_processo =  models.CharField(max_length=2, choices=NUMERO_PROCESSO_CHOICES)
     ano_processo = models.CharField(max_length=4)
     data_inicial_processo = models.DateTimeField()
     data_final_processo = models.DateTimeField()
