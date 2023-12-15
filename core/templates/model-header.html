@@ -17,7 +17,7 @@
         </li>
         {% if request.user.is_authenticated and request.user.userprofile.cargo == 'A' or request.user.is_superuser %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'matriculas:user_list' %}">Usuários</a>
+                <a class="nav-link" href="{% url 'matriculas:user_list' %}">Consultores</a>
         {% endif %}
         </li>
         {% if request.user.is_authenticated and request.user.userprofile.cargo == 'A' or request.user.is_superuser %}
