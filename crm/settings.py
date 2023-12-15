@@ -22,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-l0&74_o6pw3*#4$j9@^$n56a!q3^-c_o79vbur2mb0(w4vs28t'
-
+#SECRET_KEY = 'django-insecure-l0&74_o6pw3*#4$j9@^$n56a!q3^-c_o79vbur2mb0(w4vs28t'
+SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+#DEBUG = True
+DEBUG = os.getenv('DEBUG')
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -84,8 +84,12 @@ WSGI_APPLICATION = 'crm.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('DB_NAME', 'redenc'),
+        'USER': os.environ.get('DB_USER', 'portgres'),
+        'PASSWORD': os.environ.get('DB_PASS', 'AGkgFq44X4lfQ9z7cgl1O'),
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -127,7 +131,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
+#STATIC_ROOT ='static/'
 STATIC_ROOT = [
     os.path.join(BASE_DIR, 'static'),
 ]

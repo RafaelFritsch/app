@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  postgres-virtuacrm:
+    image: postgres:14
+    environment:
+      - POSTGRES_PASSWORD=AGkgFq44X4lfQ9z7cgl1O
+    networks:
+      - rede_virtua
+    ports:
+      - 5432:5432
+    volumes:
+      - /root/postgre:/var/lib/postgresql/data
+
+  pgadmin-virtuacrm:
+    image: dpage/pgadmin4:latest
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "crmvirtua@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: 'Suporte@virtua12' 
+    ports:
+      - 1653:80
+    depends_on:
+      - postgres-virtuacrm
+    networks:
+      - rede_virtua
+
+  redenc-virtuacrm:
+    image: rmvirtua/redenc:latest
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres-virtuacrm
+    networks:
+      - rede_virtua
+    
+
+networks:
+  rede_virtua:
+    driver: bridge
