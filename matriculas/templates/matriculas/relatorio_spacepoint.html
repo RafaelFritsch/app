@@ -9,10 +9,10 @@
 
 <div class="redenc mb-3 d-flex align-items-center justify-content-between">
     <div>
-      <img src="{% static 'images/nc_bw.png' %}" alt="Imagem" style="width: 100px; height: auto; margin-right: 10px;">
+        <img src="{% static 'images/virtua_full.svg' %}" alt="Imagem" style="width: auto; height: 80px; margin-right: 10px;">
     </div>
     <div>
-      <h1 class="mb-0">RESUMO MENSAL DE MATRICULAS POR CONSULTOR</h1>
+      <h1 class="mb-0">RESUMO MENSAL DE MATRÍCULAS POR CONSULTOR</h1>
     </div>
     <div>
         <form method="get" action="{% url 'matriculas:relatorio_spacepoint' %}">
@@ -41,32 +41,6 @@
 
 
 
-
-
-<!-- FORMULARIO PARA ENVIO DE PROCESSO -->
-
-
-<!-- <table class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th>Data Matricula</th>
-           
-        </tr>
-    </thead>
-    <tbody>
-        {% for matricula in object_list %}
-            <tr>
-                <td>{{ matricula.get_data_matricula }}</td>
-                <td>{{ matricula.nome_aluno }}</td>
-                <td>{{ matricula.usuario.get_full_name }}</td>
-               
-            </tr>
-        {% endfor %}
-    </tbody>
-</table> 
--->
-
-<!-- Tabela com total de matrículas por usuário -->
 {% if exibir_resultados %}
 <table class="table table-striped table-hover">
     <thead>

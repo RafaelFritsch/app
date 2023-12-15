@@ -1,4 +1,4 @@
-from typing import Any
+
 from django.db import models
 from django.db.models import Count, Sum, Min, Max, Q, Subquery, OuterRef
 from django.db.models.aggregates import Count, Sum 
@@ -12,7 +12,6 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django import forms
 import os
 from django.contrib.auth.models import Group
 from django.utils import timezone
@@ -21,6 +20,7 @@ from datetime import datetime
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import RedirectView
+from django.http import HttpResponse, JsonResponse
 
 
 
