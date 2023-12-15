@@ -25,11 +25,7 @@ from django.http import HttpResponse, JsonResponse
 
 
 ####################### LIST VIEWS ######################################################
-def lista_processos(request):
-    # Filtra os processos ativos
-    processos_ativos = cad_processo.objects.filter(ativo=True)
-    # Passa a lista filtrada para o template
-    return render (request, 'matriculas/processo_ativo.html', {'processos': processos_ativos})  
+
 
 class MatriculasListView(LoginRequiredMixin, ListView):
     template_name = 'matriculas/matriculas_list.html'
@@ -322,7 +318,11 @@ class ProcessoNewView(LoginRequiredMixin, CreateView):
         return reverse('matriculas:processo_list')
     
 
-    
+def lista_processos(request):
+    # Filtra os processos ativos
+    processos_ativos = cad_processo.objects.filter(ativo=True)
+    # Passa a lista filtrada para o template
+    return render (request, 'matriculas/processo_ativo.html', {'processos': processos_ativos})     
     
 ####################### UPDATE VIEWS ######################################################
     
@@ -521,7 +521,8 @@ class ProcessoDeleteView(LoginRequiredMixin, DeleteView):
 
 def RankView(request):
     context = {}
-    context['usuarios'] = User.objects.all()
+    #context['usuarios'] = User.objects.all()
+    context['usuarios'] = User.objects.exclude(is_superuser=True)  # Exclui superusuários
 
     # Obtém a campanha ativa
     processo_ativo = cad_processo.objects.filter(ativo=True).first()

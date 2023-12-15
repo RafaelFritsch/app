@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.utils import timezone
+from django.utils.text import slugify
 
 
 class DateInput(forms.DateInput):
@@ -222,9 +223,12 @@ class ProcessoForm(forms.ModelForm):
         numero_processo = cleaned_data.get('numero_processo')
         ano_processo = cleaned_data.get('ano_processo')
 
-        # Verifica se o processo existe
-        if not cad_processo.objects.filter(numero_processo=numero_processo, ano_processo=ano_processo).exists():
-            raise forms.ValidationError("O processo selecionado não é válido.")
+        # Normaliza os dados
+        numero_processo = slugify(numero_processo)
+
+        # Verifica se o processo existe apenas durante a atualização
+        if self.instance and cad_processo.objects.filter(numero_processo=numero_processo, ano_processo=ano_processo).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("O processo {}-{} já existe.".format(numero_processo, ano_processo))
     
     class Meta:
         model = cad_processo
