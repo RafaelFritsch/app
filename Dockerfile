@@ -1,23 +1,25 @@
-<<<<<<< HEAD
-ROM python:3.11.4
+# pull official base image
+FROM python:3.11.4-slim-buster
 
-WORKDIR .
+# set work directory
+WORKDIR /usr/src/app
 
-COPY requiremets.txt .
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN pip install -r requiremets.txt
-=======
-FROM python:3.11.4
-
-WORKDIR .
-
-COPY requirements.txt .
-
+# install dependencies
+RUN pip install --upgrade pip
+COPY ./requirements.txt .
 RUN pip install -r requirements.txt
->>>>>>> 363feb8d0a4d3b2b2fc2e61e50be1aa5f9e024b3
 
+# copy entrypoint.sh
+COPY ./entrypoint.sh .
+RUN sed -i 's/\r$//g' /usr/src/app/entrypoint.sh
+RUN chmod +x /usr/src/app/entrypoint.sh
+
+# copy project
 COPY . .
 
-EXPOSE 8000
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# run entrypoint.sh
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
