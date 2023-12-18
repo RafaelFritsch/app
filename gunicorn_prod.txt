@@ -1,0 +1,75 @@
+###############################################################################
+# Replace
+# virtuapp the name of the gunicorn file you want
+# app your user name
+# app the folder name of your project
+# crm the folder name where you find a file called wsgi.py
+#
+###############################################################################
+# Criando o arquivo virtuapp.socket
+sudo nano /etc/systemd/system/virtuapp.socket
+
+###############################################################################
+# Conteúdo do arquivo
+[Unit]
+Description=gunicorn virtuapp socket
+
+[Socket]
+ListenStream=/run/virtuapp.socket
+
+[Install]
+WantedBy=sockets.target
+
+###############################################################################
+# Criando o arquivo virtuapp.service
+sudo nano /etc/systemd/system/virtuapp.service
+
+###############################################################################
+# Conteúdo do arquivo
+[Unit]
+Description=Gunicorn daemon (You can change if you want)
+Requires=virtuapp.socket
+After=network.target
+
+[Service]
+User=app
+Group=www-data
+Restart=on-failure
+# EnvironmentFile=/home/app/app/.env
+WorkingDirectory=/home/app/app
+# --error-logfile --enable-stdio-inheritance --log-level and --capture-output
+# are all for debugging purposes.
+ExecStart=/home/app/app/venv/bin/gunicorn \
+          --error-logfile /home/app/app/gunicorn-error-log \
+          --enable-stdio-inheritance \
+          --log-level "debug" \
+          --capture-output \
+          --access-logfile - \
+          --workers 6 \
+          --bind unix:/run/virtuapp.socket \
+          crm.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+###############################################################################
+# Ativando
+sudo systemctl start virtuapp.socket
+sudo systemctl enable virtuapp.socket
+
+# Checando
+sudo systemctl status virtuapp.socket
+curl --unix-socket /run/virtuapp.socket localhost
+sudo systemctl status virtuapp
+
+# Restarting
+sudo systemctl restart virtuapp.service
+sudo systemctl restart virtuapp.socket
+sudo systemctl restart virtuapp
+
+# After changing something
+sudo systemctl daemon-reload
+
+# Debugging
+sudo journalctl -u virtuapp.service
+sudo journalctl -u virtuapp.socket
