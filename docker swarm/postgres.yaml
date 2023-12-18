@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=virtuapp
+      - POSTGRES_DB=redenc
+      - POSTGRES_PASSWORD=AGkgFq44X4lfQ9z7cgl1O
+    networks:
+      - rede_virtua
+    #ports:
+    #  - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 1024M
+
+volumes:
+  postgres_data:
+    external: true
+    name: postgres_data
+
+networks:
+  rede_virtua:
+    external: true
+    name: rede_virtua
