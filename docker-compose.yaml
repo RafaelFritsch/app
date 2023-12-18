@@ -27,6 +27,8 @@ services:
     build: ./nginx
     volumes:
       - static_volume:/home/app/web/staticfiles
+      - /data/certs-data/:/data/letsencrypt/
+      - /etc/letsencrypt/:/etc/letsencrypt/
     ports:
       - 1337:80
     depends_on:
