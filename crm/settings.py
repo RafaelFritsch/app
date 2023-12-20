@@ -27,7 +27,7 @@ SECRET_KEY = 'n6sylk*yhwduv4la$2qu+8^og5$m!rvn9&gy#4499r&7e9vb35'
 # SECRET_KEY = os.environ.get('SECRET_KEY') 
 # Acima para usar com docker
 
-DEBUG = False
+DEBUG =True
 #DEBUG = bool(os.environ.get("DEBUG", default=0))
 
 
@@ -93,16 +93,16 @@ WSGI_APPLICATION = 'crm.wsgi.application'
 
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": 'dajango.db.backends.postgresql',
-        "NAME": 'redenc', #Nome da Base de dados do Postgre
-        "USER": 'virtuapp', # Usuario da Base de dados
-        "PASSWORD": 'AGkgFq44X4lfQ9z7cgl1O',
-        "HOST": 'localhost',
-        "PORT": '5432',
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": 'django.db.backends.postgresql',
+#         "NAME": 'redenc', #Nome da Base de dados do Postgre
+#         "USER": 'virtuapp', # Usuario da Base de dados
+#         "PASSWORD": 'AGkgFq44X4lfQ9z7cgl1O',
+#         "HOST": 'localhost',
+#         "PORT": '5432',
+#     }
+# }
 
 
 # DATABASES = {
@@ -116,12 +116,12 @@ DATABASES = {
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 # Password validation
@@ -160,8 +160,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+#STATIC_URL = "static/"
+#STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATIC_URL = 'static/'
+# STATICFILES_DIRS = (
+#     BASE_DIR / 'static',
+# )
+#STATIC_ROOT = BASE_DIR / 'static'  # collectstatic
+
+STATIC_ROOT = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 
 LOGIN_URL = '/login/'

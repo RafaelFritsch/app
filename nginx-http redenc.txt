@@ -2,9 +2,9 @@
 #
 # REPLACES
 # 95.217.135.107 = Replace with your domain
-# /home/app/app = Replace with the path to the folder for the project
-# /home/app/app/static = Replace with the path to the folder for static files
-# /home/app/app/media = Replace with the path to the folder for media files
+# /home/app/redencapp = Replace with the path to the folder for the project
+# /home/app/redencapp/static = Replace with the path to the folder for static files
+# /home/app/redencapp/media = Replace with the path to the folder for media files
 # virtuapp = Replace with your unix socket name (don't add .socket)
 # 
 # Set timezone
@@ -20,16 +20,16 @@ server {
   # Add index.php to the list if you are using PHP
   index index.html index.htm index.nginx-debian.html index.php;
   
-  # ATTENTION: /home/app/app/static
+  # ATTENTION: /home/app/redencapp/static
   location /static {
     autoindex on;
-    alias /home/app/app/static;
+    alias /home/app/redencapp/staticfiles;
   }
 
-  # ATTENTION: /home/app/app/media 
+  # ATTENTION: /home/app/redencapp/media 
   location /media {
     autoindex on;
-    alias /home/app/app/media;
+    alias /home/app/redencapp/media;
   }
 
   # ATTENTION: virtuapp

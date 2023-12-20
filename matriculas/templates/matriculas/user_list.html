@@ -42,7 +42,9 @@
             <th class="text-start">Usuário</th>
             <th class="text-start">Email</th>
             <th class="text-start">Polo</th>
-            <th class="text-start">Tipo</th>
+            <th class="text-start">Perfil</th>
+            <th class="text-start">Ranking</th>
+            <th class="text-center">Acesso</th>
         </tr>
     </thead>
     <tbody>
@@ -58,6 +60,7 @@
                         Sem polo vinculado
                     {% endif %}
                 </td>
+                
                 <td class="text-start">
                   {% if user.userprofile %}
                       {% if user.userprofile.cargo == 'U' %}
@@ -71,7 +74,25 @@
                       Sem perfil de usuário
                   {% endif %}
               </td>
-              <td class="text-end">
+              <td class="text-start">
+                {% if not user.is_superuser %}
+                    {% if user.userprofile.ranking %}
+                        <form method="post" action="{% url 'matriculas:deactivate_ranking' user.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Desativar</button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'matriculas:activate_ranking' user.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Ativar</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </td>
+            
+       
+            
+              <td class="text-center">
                 {% if not user.is_superuser %} {# Adicionando a condição para ocultar se for superadmin #}
                   {% if user.is_active %}
                       <a href="{% url 'matriculas:user_deactivate' user.id %}" class="btn btn-danger">Desativar</a>

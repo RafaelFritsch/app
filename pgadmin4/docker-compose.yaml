@@ -1,0 +1,23 @@
+version: '3.5'
+
+services:
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'crmvirtua@gmail.com'
+      PGADMIN_DEFAULT_PASSWORD: 'virtua@suporte'
+      #PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - pgadmin:/var/lib/pgadmin
+
+    ports:
+      - "15432:80"
+    restart: unless-stopped
+
+#networks:
+#  pgadmin:
+#    driver: bridge
+
+volumes:
+    pgadmin:

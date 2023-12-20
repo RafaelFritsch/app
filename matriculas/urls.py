@@ -41,6 +41,7 @@ urlpatterns = [
     path('tipocurso/<int:id>', TipoCursoUpdateView.as_view(), name='tipo_curso_update'),
     path('polo/<int:id>', PoloUpdateView.as_view(), name='polo_update'),
     path('processo/<int:id>', ProcessoUpdateView.as_view(), name='processo_update'),
+    path('user_update/<int:id>/', UserUpdateView.as_view(), name='user_update'),
     
     #DeleteView
     path('<int:id>/delete', MatriculasDeleteView.as_view(), name='matriculas_delete'),
@@ -61,7 +62,8 @@ urlpatterns = [
     path('relatorios-campanha/', RelatorioCampanha.as_view(), name='relatorio_campanha'),
     path('user/<int:id>/activate/', UserActivateView.as_view(), name='user_activate'),
     path('user/<int:id>/deactivate/', UserDeactivateView.as_view(), name='user_deactivate'),
-    
+    path('activate_ranking/<int:id>/', UserActivateRanking.as_view(), name='activate_ranking'),
+    path('deactivate_ranking/<int:id>/', UserDeactivateRanking.as_view(), name='deactivate_ranking'),
     
    
  

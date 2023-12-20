@@ -2,7 +2,7 @@
 # Replace
 # virtuapp the name of the gunicorn file you want
 # app your user name
-# app the folder name of your project
+# redencapp the folder name of your project
 # crm the folder name where you find a file called wsgi.py
 #
 ###############################################################################
@@ -35,12 +35,12 @@ After=network.target
 User=app
 Group=www-data
 Restart=on-failure
-# EnvironmentFile=/home/app/app/.env
-WorkingDirectory=/home/app/app
+# EnvironmentFile=/home/app/redencapp/.env
+WorkingDirectory=/home/app/redencapp
 # --error-logfile --enable-stdio-inheritance --log-level and --capture-output
 # are all for debugging purposes.
-ExecStart=/home/app/app/venv/bin/gunicorn \
-          --error-logfile /home/app/app/gunicorn-error-log \
+ExecStart=/home/app/redencapp/venv/bin/gunicorn \
+          --error-logfile /home/app/redencapp/gunicorn-error-log \
           --enable-stdio-inheritance \
           --log-level "debug" \
           --capture-output \
@@ -66,6 +66,7 @@ sudo systemctl status virtuapp
 sudo systemctl restart virtuapp.service
 sudo systemctl restart virtuapp.socket
 sudo systemctl restart virtuapp
+sudo systemctl restart nginx
 
 # After changing something
 sudo systemctl daemon-reload

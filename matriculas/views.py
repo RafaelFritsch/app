@@ -17,7 +17,7 @@ from django.contrib.auth.models import Group
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import RedirectView
 from django.http import HttpResponse, JsonResponse
@@ -75,7 +75,7 @@ class UserListView(LoginRequiredMixin, ListView):
     template_name = 'matriculas/user_list.html'
     model = User
     queryset = User.objects.all()
-    paginate_by = 15
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -98,6 +98,9 @@ class UserListView(LoginRequiredMixin, ListView):
         # Adiciona os cargos de cada usuário ao contexto
         user_profiles = UserProfile.objects.filter(user__in=context['user_list'])
         context['cargos'] = {profile.user_id: profile.cargo for profile in user_profiles}
+        
+        # Adiciona os rankings de cada usuário ao contexto
+        context['rankings'] = {profile.user_id: profile.ranking for profile in user_profiles}
 
         return context
 
@@ -265,6 +268,23 @@ class UserDeactivateView(View):
         user.save()
         return RedirectView.as_view(url=reverse_lazy('matriculas:user_list'))(request)
 
+class UserActivateRanking(View):
+    def post(self, request, id):
+        user = get_object_or_404(User, id=id)
+        user.userprofile.ranking = True
+        user.userprofile.save()
+        return redirect('matriculas:user_list')
+
+class UserDeactivateRanking(View):
+    def post(self, request, id):
+        user = get_object_or_404(User, id=id)
+        user.userprofile.ranking = False
+        user.userprofile.save()
+        return redirect('matriculas:user_list')
+
+
+
+
 
 class PoloNewView(LoginRequiredMixin, CreateView):
     template_name = 'matriculas/polo_new.html'
@@ -352,10 +372,30 @@ class MatriculasUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('matriculas:matriculas_list')
 
 
-class UserUpdateView(LoginRequiredMixin, UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView): #TODO: Ajustar para funcionar corretamente
     template_name = 'matriculas/user_update.html'
     form_class = UserForm
     model = UserProfile
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(UserProfile, user__id=self.kwargs['id'])
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        user_form = UserForm(instance=self.object.user)
+        return self.render_to_response(self.get_context_data(user_form=user_form))
+
+    def form_valid(self, form):
+        user_profile = self.get_object()
+        user_profile.polo = form.cleaned_data['polo']
+        user_profile.cargo = form.cleaned_data['cargo']
+        user_profile.ranking = form.cleaned_data['ranking']
+        user_profile.save()
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('matriculas:user_list')
 
     def get_success_url(self):
         return reverse_lazy('matriculas:user_list')
@@ -534,35 +574,40 @@ def RankView(request):
         context['contagem_matriculas'] = []
 
         for usuario in context['usuarios']:
-            contagem = Matriculas.objects.filter(usuario=usuario, create_date__range=[data_inicio, data_fim]).count()
+            user_profile = UserProfile.objects.filter(user=usuario, ranking=True).first()
+            
+            if user_profile:
+                first_name = usuario.first_name
+                last_name = usuario.last_name
+                contagem = Matriculas.objects.filter(usuario=usuario, create_date__range=[data_inicio, data_fim]).count()
+                soma_pontos = tipo_curso.objects.filter(matriculas__usuario=usuario).aggregate(soma_pontos=models.Sum('pontos'))['soma_pontos']
+                ultima_matricula = Matriculas.objects.filter(usuario=usuario).order_by('-create_date').first()
 
-            soma_pontos = tipo_curso.objects.filter(matriculas__usuario=usuario).aggregate(soma_pontos=models.Sum('pontos'))['soma_pontos']
-
-            ultima_matricula = Matriculas.objects.filter(usuario=usuario).order_by('-create_date').first()
-
-            if ultima_matricula:
-                agora = datetime.now(ultima_matricula.create_date.tzinfo)
-                dias_sem_matricula = (agora - ultima_matricula.create_date).days
-            else:
-                dias_sem_matricula = None
-
-            if dias_sem_matricula is not None:
-                if dias_sem_matricula <= 1:
-                    cor = 'verde'
-                elif dias_sem_matricula <= 3:
-                    cor = 'amarela'
+                if ultima_matricula:
+                    agora = datetime.now(ultima_matricula.create_date.tzinfo)
+                    dias_sem_matricula = (agora - ultima_matricula.create_date).days
                 else:
-                    cor = 'vermelha'
-            else:
-                cor = 'nunca'
+                    dias_sem_matricula = None
 
-            context['contagem_matriculas'].append({
-                'usuario': usuario.username,
-                'contagem': contagem,
-                'soma_pontos': soma_pontos if soma_pontos is not None else 0,
-                'dias_sem_matricula': dias_sem_matricula,
-                'cor': cor
-            })
+                if dias_sem_matricula is not None:
+                    if dias_sem_matricula <= 1:
+                        cor = 'verde'
+                    elif dias_sem_matricula <= 3:
+                        cor = 'amarela'
+                    else:
+                        cor = 'vermelha'
+                else:
+                    cor = 'nunca'
+
+                context['contagem_matriculas'].append({
+                    'usuario': usuario.username,
+                    'first_name': first_name,  # Adicionado campo 'first_name'
+                    'last_name': last_name, 
+                    'contagem': contagem,
+                    'soma_pontos': soma_pontos if soma_pontos is not None else 0,
+                    'dias_sem_matricula': dias_sem_matricula,
+                    'cor': cor
+                })
 
         context['contagem_matriculas'].sort(key=lambda x: x['contagem'], reverse=True)
         context['num_linhas'] = range(1, len(context['contagem_matriculas']) + 1)

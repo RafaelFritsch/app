@@ -163,12 +163,16 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     polo = models.ForeignKey(cad_polos, on_delete=models.SET_NULL, null=True, blank=True)
     cargo = models.CharField(max_length=1, choices=choices_cargo)
+    ranking = models.BooleanField(default=True)
     
     def __str__(self):
         return self.user.username
     
     def get_full_name(self):
         return f"{self.user.first_name} {self.user.last_name}"
+    
+    def get_absolute_url(self):
+        return reverse("matriculas:user_update", kwargs={'id': self.id}) #Direciona para a url de edição
    
 
 class cad_processo(models.Model):

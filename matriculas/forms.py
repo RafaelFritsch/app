@@ -164,9 +164,10 @@ class UserForm(UserCreationForm):
     choices_cargo = (('U', 'USUARIO'), ('A', 'ADMINISTRADOR'))
     polo = forms.ModelChoiceField(queryset=cad_polos.objects.all())
     cargo = forms.ChoiceField(choices=choices_cargo, widget=forms.Select(attrs={'class': 'form-control'}))  # Adicionei o widget e a classe 'form-control'
+    ranking = forms.BooleanField(required=False)
     class Meta:
          model = User
-         fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2', 'polo', 'cargo')  # Adicionei 'polo' e 'cargo'
+         fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2', 'polo', 'cargo', 'ranking')  # Adicionei 'polo' e 'cargo'
          labels = {
              'first_name': 'Nome',
              'last_name': 'Sobrenome',
@@ -176,11 +177,15 @@ class UserForm(UserCreationForm):
              'password2': 'Confirme a Senha',
              'polo': 'Polo',
              'cargo': 'Cargo',
+             'ranking': 'Ranking',
          }
 
     
     def get_absolute_url(self):
         return reverse("matriculas:user_update", kwargs={'id': self.id}) #Direciona para a url de edição
+
+
+
  
 class UsuarioForm(forms.Form):
     usuarios = forms.ModelChoiceField(queryset=UserProfile.objects.all(),required=False, label='Escolha o usuário')   

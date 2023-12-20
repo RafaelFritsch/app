@@ -45,7 +45,7 @@
             {{ forloop.counter }}
           {% endif %}
         </td>
-        <td class="align-middle">{{ item.usuario }}</td>
+        <td class="align-middle">{{ item.first_name }} {{ item.last_name }}</td>
         <td class="text-center align-middle">{{ item.contagem }}</td>
         <td class="text-center align-middle">{{ item.soma_pontos }}</td>
         <td class="text-center align-middle">{% if item.dias_sem_matricula is not None %}{{ item.dias_sem_matricula }}{% else %}Nunca{% endif %}</td>

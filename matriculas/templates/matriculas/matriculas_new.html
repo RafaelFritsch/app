@@ -6,28 +6,28 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'css/matnew.css' %}">
 
-    <div class=" centered-form text-center bg bg-primary-subtle " style="scale: 0.95;">
-        <h4>CADASTRO DE MATRÍCULAS</h4>
-      </div>
+    <div class=" centered-form  mb-0" style="scale: 0.95;">
+        <h4 class="text-center mb-5">CADASTRO DE MATRÍCULAS</h4>
+    
 
-    <div class="centered-form border  border-primary-subtle" style="scale: 0.95;">
-    <div>
+  
+    
         {% if form.errors %}
             <div class="alert alert-danger">
                 <strong>{{ form.errors }}</strong>
             </div>
         {% endif %}
-    </div>
+    
 
-    <div  style="scale: 0.95;">
-        <form method="POST" enctype="multipart/form-data">
+         
+        <form class="form-control" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.media.js }}
             {{ form|crispy }}
 
             <button type="submit" class="btn btn-primary">SALVAR</button>
         </form>
-    </div>
+   
 </div>
 
 
