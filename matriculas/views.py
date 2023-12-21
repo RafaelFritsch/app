@@ -75,7 +75,7 @@ class UserListView(LoginRequiredMixin, ListView):
     template_name = 'matriculas/user_list.html'
     model = User
     queryset = User.objects.all()
-    paginate_by = 10
+    paginate_by = 8
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -108,7 +108,7 @@ class CampanhaListView(LoginRequiredMixin, ListView):
     template_name = 'matriculas/campanha_list.html'
     model = cad_campanhas
     queryset = cad_campanhas.objects.all()
-    paginate_by = 10
+    paginate_by = 8
     def get_queryset(self):
         queryset = super().get_queryset()
         search_query = self.request.GET.get('name', '')
@@ -123,7 +123,7 @@ class CursoListView(LoginRequiredMixin, ListView):
     template_name = 'matriculas/curso_list.html'
     model = cad_cursos
     queryset = cad_cursos.objects.all()
-    paginate_by = 10
+    paginate_by = 8
     def get_queryset(self):
         queryset = super().get_queryset()
         search_query = self.request.GET.get('name', '')
@@ -138,7 +138,7 @@ class PoloListView(LoginRequiredMixin, ListView):
     template_name = 'matriculas/polo_list.html'
     model = cad_polos
     queryset = cad_polos.objects.all()
-    paginate_by = 10
+    paginate_by = 8
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -162,7 +162,7 @@ class TipoCursoListView(LoginRequiredMixin, ListView):
     template_name = 'matriculas/tipo_curso_list.html'
     model = tipo_curso
     queryset = tipo_curso.objects.all()
-    paginate_by = 10
+    paginate_by = 8
     def get_queryset(self):
         queryset = super().get_queryset()
         search_query = self.request.GET.get('name', '')
@@ -177,7 +177,7 @@ class ProcessoListView(LoginRequiredMixin, ListView):
     template_name = 'matriculas/processo_list.html'
     model = cad_processo
     queryset = cad_processo.objects.all()
-    paginate_by = 20
+    paginate_by = 8
     def get_queryset(self):
         queryset = super().get_queryset()
         search_query = self.request.GET.get('name', '')
@@ -561,6 +561,7 @@ class ProcessoDeleteView(LoginRequiredMixin, DeleteView):
 
 def RankView(request):
     context = {}
+    
     #context['usuarios'] = User.objects.all()
     context['usuarios'] = User.objects.exclude(is_superuser=True)  # Exclui superusuários
 
@@ -617,7 +618,6 @@ def RankView(request):
 #TODO: Ajustar para quando exlcuir um registro voltar para a mesma página
 class MatriculasFullListView(ListView):
     template_name = 'matriculas/matriculas_full_list.html'
-    paginate_by = 15
     model = Matriculas
     queryset = Matriculas.objects.all()
 
@@ -681,7 +681,6 @@ class MatriculasFullListView(ListView):
     
 class RelatorioDia(LoginRequiredMixin, ListView):
     template_name = 'matriculas/relatorio_dia.html'
-    paginate_by = 10
     model = Matriculas
 
     def get_context_data(self, **kwargs):
@@ -713,11 +712,11 @@ class RelatorioDia(LoginRequiredMixin, ListView):
 
         context['matriculas_por_polo'] = matriculas_por_polo
 
-        # Total de Matrículas por Usuário
+        # Total de Matrículas por Usuário 
         matriculas_por_usuario = (
             Matriculas.objects
             .filter(data_matricula__date=selected_date)
-            .values('usuario__username')  # Substitua 'usuario__username' pelo nome real do campo que representa o usuário em Matriculas
+            .values('usuario__username', 'usuario__first_name', 'usuario__last_name')  
             .annotate(total=Count('id'))
         )
         context['matriculas_por_usuario'] = matriculas_por_usuario
@@ -738,7 +737,6 @@ class RelatorioDia(LoginRequiredMixin, ListView):
 
 class RelatorioFinanceiro(LoginRequiredMixin,FormView, ListView): 
     template_name = 'matriculas/relatorio_financeiro.html'
-    paginate_by = 10
     model = Matriculas
     form_class = DateRangeForm
 
@@ -826,10 +824,11 @@ class RelatorioFinanceiro(LoginRequiredMixin,FormView, ListView):
  
 
 
-#TODO: COnferir o paginate to das as htmls
 
-#TODO: GERAL : INCLUIR SPACEPOINT NO RESUMO MENSAL ( ANTES FAZER PUSH DAS ATUALIZACOES ANTERIORES)
 
+#TODO: GERAL : INCLUIR SPACEPOINT NO RESUMO MENSAL 
+
+#TODO: Criar metodo para retirar os pontos
 
 class RelatorioSpace(LoginRequiredMixin, ListView):
     template_name = 'matriculas/relatorio_spacepoint.html'
@@ -944,6 +943,7 @@ class RelatorioSpace(LoginRequiredMixin, ListView):
 
 class RelatorioCampanha(LoginRequiredMixin, ListView):
     template_name = 'matriculas/relatorio_campanha.html'
+    paginate_by = 8
     model = Matriculas
 
     def get_context_data(self, **kwargs):
@@ -1013,9 +1013,15 @@ class RelatorioCampanha(LoginRequiredMixin, ListView):
             current_date = data_inicio_campanha
             while current_date <= data_fim_campanha:
                 total_matriculas_por_mes[current_date.strftime('%Y-%m')] = matriculas_usuario.filter(
-                    data_matricula__year=current_date.year,
-                    data_matricula__month=current_date.month
+                data_matricula__gte=current_date,  # Use o operador maior ou igual para incluir o dia atual
+                data_matricula__lt=(current_date + relativedelta(months=1))  # Menor que o primeiro dia do próximo mês
                 ).count()
+                
+                
+                # total_matriculas_por_mes[current_date.strftime('%Y-%m')] = matriculas_usuario.filter(
+                #     data_matricula__year=current_date.year,
+                #     data_matricula__month=current_date.month
+                # ).count()
 
                 current_date += relativedelta(months=1)
 

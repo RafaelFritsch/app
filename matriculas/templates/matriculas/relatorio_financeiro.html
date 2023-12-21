@@ -83,7 +83,7 @@
     <tbody>
         {% for data in user_data %}
             <tr>
-                <td class="text-start align-middle">{{ data.user.username }}</td>
+                <td class="text-start align-middle">{{ data.user.first_name }} {{ data.user.last_name }}</td>
                 <td class="text-center align-middle">R$ {{ data.total_valor_mensalidade|floatformat:2 }}</td>
                 <td class="text-center align-middle">R$ {{ data.total_desconto_polo|floatformat:0 }}</td>
                 <td class="text-center align-middle">{{ data.total_desconto_total|floatformat:2 }} %</td>

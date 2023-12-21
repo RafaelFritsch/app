@@ -74,7 +74,7 @@
         <tbody>
           {% for item in matriculas_por_usuario %}
             <tr>
-              <td class="text-start">{{ item.usuario__username }}</td>
+              <td class="text-start">{{ item.usuario__first_name }} {{ item.usuario__last_name }}</td>
               <td class="text-center">{{ item.total }}</td>
             </tr>
           {% endfor %}
