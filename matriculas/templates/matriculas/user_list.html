@@ -84,7 +84,7 @@
                     {% else %}
                         <form method="post" action="{% url 'matriculas:activate_ranking' user.id %}" style="display: inline;">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-success">Ativar</button>
+                            <button type="submit" class="btn btn-outline-success btn-sm">Ativar</button>
                         </form>
                     {% endif %}
                 {% endif %}
@@ -95,9 +95,9 @@
               <td class="text-center">
                 {% if not user.is_superuser %} {# Adicionando a condição para ocultar se for superadmin #}
                   {% if user.is_active %}
-                      <a href="{% url 'matriculas:user_deactivate' user.id %}" class="btn btn-danger">Desativar</a>
+                      <a href="{% url 'matriculas:user_deactivate' user.id %}" class="btn btn-outline-danger btn-sm">Desativar</a>
                   {% else %}
-                      <a href="{% url 'matriculas:user_activate' user.id %}" class="btn btn-success">Ativar</a>
+                      <a href="{% url 'matriculas:user_activate' user.id %}" class="btn btn-outline-success btn-sm">Ativar</a>
                   {% endif %}
                 {% endif %}
             </td>

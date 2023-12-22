@@ -57,15 +57,15 @@
                         <span class="badge bg-danger">Inativo</span>
                     {% endif %}                         
               </td>
-            <td class="text-end align-middle"><a href = "{{ cad_processo.get_absolute_url }}"><button type="button" class="btn btn-primary">Editar</button></td>
+            <td class="text-end align-middle"><a href = "{{ cad_processo.get_absolute_url }}"><button type="button" class="btn btn-outline-primary btn-sm">Editar</button></td>
               <!-- <form method="POST" action="{{ cad_processo.get_delete_url }}">{% csrf_token %}
                 <td class="text-end align-middle"><button type="submit" class="btn btn-danger">Excluir</button></td>
               </form> -->
               <td class="text-end">
                 {% if cad_processo.ativo %}
-                  <a href="{% url 'matriculas:processo_deactivate' cad_processo.id %}" class="btn btn-danger">Desativar</a>
+                  <a href="{% url 'matriculas:processo_deactivate' cad_processo.id %}" class="btn btn-outline-danger btn-sm">Desativar</a>
                   {% else %}
-                  <a href="{% url 'matriculas:processo_activate' cad_processo.id %}" class="btn btn-success">Ativar</a>
+                  <a href="{% url 'matriculas:processo_activate' cad_processo.id %}" class="btn btn-outline-success btn-sm">Ativar</a>
                   {% endif %}
           </td> 
           </tr>

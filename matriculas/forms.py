@@ -35,6 +35,7 @@ class TipoCursoForm(forms.ModelForm):
         fields = (
             'nome',
             'pontos',
+            'active',
         )    
 
 

@@ -57,15 +57,15 @@
               <span class="badge bg-danger">Inativo</span>
             {% endif %}
             </td>
-            <td class="text-end align-middle"><a href = "{{ polo.get_absolute_url }}"><button type="button" class="btn btn-primary">Editar</button></td>
+            <td class="text-end align-middle"><a href = "{{ polo.get_absolute_url }}"><button type="button" class="btn btn-outline-primary btn-sm">Editar</button></td>
               <!-- <form method="POST" action="{{ polo.get_delete_url }}">{% csrf_token %}
                 <td class="text-end align-center"><button type="submit" class="btn btn-danger">Excluir</button></td>
               </form> -->
               <td class="text-end">
                 {% if polo.active %}
-                  <a href="{% url 'matriculas:polo_deactivate' polo.id %}" class="btn btn-danger">Desativar</a>
+                  <a href="{% url 'matriculas:polo_deactivate' polo.id %}" class=" btn btn-outline-danger btn-sm">Desativar</a>
                   {% else %}
-                  <a href="{% url 'matriculas:polo_activate' polo.id %}" class="btn btn-success">Ativar</a>
+                  <a href="{% url 'matriculas:polo_activate' polo.id %}" class="btn btn-outline-success btn-sm">Ativar</a>
                   {% endif %}
           </td> 
           </tr>
