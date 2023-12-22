@@ -37,9 +37,9 @@
           <th class="text-start align-middle">Nome</th>
           <th class="text-center align-middle">Data Inicial</th>
           <th class="text-center align-middle">Data Final</th>
-          <th class="text-center align-middle">Ativo</th>
+          <th class="text-center align-middle">Status</th>
           <th class="text-end align-middle">EDITAR</th>
-          <th class="text-end align-middle">EXCLUIR</th>
+          <th class="text-end align-middle"></th>
         </tr>
       </thead>
       <tbody>
@@ -56,9 +56,18 @@
               {% endif %}
             </td>
             <td class="text-end align-middle"><a href = "{{ cad_campanha.get_absolute_url }}"><button type="button" class="btn btn-primary">Editar</button></td>
-              <form method="POST" action="{{ cad_campanha.get_delete_url }}">{% csrf_token %}
+              <!-- <form method="POST" action="{{ cad_campanha.get_delete_url }}">{% csrf_token %}
                 <td class="text-end align-middle"><button type="submit" class="btn btn-danger">Excluir</button></td>
-              </form>
+              </form> -->
+            
+              <td class="text-end">
+                  {% if cad_campanha.active %}
+                    <a href="{% url 'matriculas:campanha_deactivate' cad_campanha.id %}" class="btn btn-danger">Desativar</a>
+                    {% else %}
+                    <a href="{% url 'matriculas:campanha_activate' cad_campanha.id %}" class="btn btn-success">Ativar</a>
+                    {% endif %}
+            </td> 
+
           </tr>
         {% endfor %}
       </tbody>
@@ -66,7 +75,7 @@
   </table>
 
   <ul class="pagination">
-    {%if  page_obj.has_previous %}
+    {% if page_obj.has_previous %}
       <li class="page-item">
         <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
@@ -81,12 +90,12 @@
     {% endif %}
   
     {% for object in page_obj.paginator.page_range %}
-      <li class="page-item"><a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ object }}">{{ object }}</a></li>
     {% endfor %}
   
     {% if page_obj.has_next %}
       <li class="page-item">
-        <a class="page-link" href="?page= {{ page_obj.next_page_number }}" aria-label="Next">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
         </a>
       </li>
@@ -97,7 +106,7 @@
         </a>
       </li>
     {% endif %}
-    </ul>
+  </ul>
   
 </div>
 {% endblock %}

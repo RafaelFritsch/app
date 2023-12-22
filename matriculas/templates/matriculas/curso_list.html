@@ -40,7 +40,7 @@
           <th class="text-start align-middle">Tipo</th>
           <th class="text-start align-middle"">Ativo</th>
           <th class="text-end align-middle">EDITAR</th>
-          <th class="text-end align-middle">EXCLUIR</th>
+          <!-- <th class="text-end align-middle">EXCLUIR</th> -->
         </tr>
       </thead>
       <tbody>
@@ -58,9 +58,9 @@
 
 
             <td class="text-end align-middle"><a href = "{{ cad_curso.get_absolute_url }}"><button type="button" class="btn btn-primary">Editar</button></td>
-              <form method="POST" action="{{ cad_curso.get_delete_url }}">{% csrf_token %}
+              <!-- <form method="POST" action="{{ cad_curso.get_delete_url }}">{% csrf_token %}
                 <td class="text-end align-middle"><button type="submit" class="btn btn-danger">Excluir</button></td>
-              </form>
+              </form> -->
           </tr>
         {% endfor %}
       </tbody>

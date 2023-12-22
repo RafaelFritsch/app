@@ -100,7 +100,7 @@
             <td class="text-center w-11 align-middle align-items-center">{{matriculas.valor_mensalidade}}</td>
             <td class="text-center w-11 align-middle align-items-center">{{matriculas.desconto_polo}}</td>
             <td class="text-center w-11 align-middle align-items-center">{{matriculas.desconto_total}}</td>
-            <td class="text-center w-11 align-middle align-items-center">{{matriculas.usuario.username }}</td>
+            <td class="text-center w-11 align-middle align-items-center">{{matriculas.usuario.first_name }} {{matriculas.usuario.last_name }}</td>
             <td class="text-center w-11">
               <div class="d-flex justify-content-center align-items-center">
                 <!-- <a href = "{{ matriculas.get_absolute_url }}">
@@ -162,7 +162,7 @@
     </li>
   {% endif %}
   </ul>
-
+</div>
 <!-- Modal do Comprovante -->
 <div class="modal fade" id="imagemModal" tabindex="-1" aria-labelledby="imagemModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -214,5 +214,5 @@
     document.getElementById('formExclusao').submit();
   }
 </script>
-</div>
+
 {% endblock %}

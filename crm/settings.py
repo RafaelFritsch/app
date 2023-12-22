@@ -93,16 +93,18 @@ WSGI_APPLICATION = 'crm.wsgi.application'
 
 
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": 'django.db.backends.postgresql',
-#         "NAME": 'redenc', #Nome da Base de dados do Postgre
-#         "USER": 'virtuapp', # Usuario da Base de dados
-#         "PASSWORD": 'AGkgFq44X4lfQ9z7cgl1O',
-#         "HOST": 'localhost',
-#         "PORT": '5432',
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": 'redenc', #Nome da Base de dados do Postgre
+        #"USER": 'virtuapp', # Usuario da Base de dados
+        "USER": 'postgres', # Usuario da Base de dados
+        "PASSWORD": 'root',
+        #"PASSWORD": 'AGkgFq44X4lfQ9z7cgl1O',
+        "HOST": 'localhost',
+        "PORT": '5432',
+    }
+}
 
 
 # DATABASES = {
@@ -116,12 +118,12 @@ WSGI_APPLICATION = 'crm.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation

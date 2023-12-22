@@ -1,0 +1,9 @@
+sudo systemctl restart virtuapp.service
+sudo systemctl restart virtuapp.socket
+sudo systemctl restart virtuapp
+sudo systemctl restart nginx
+
+sudo systemctl stop virtuapp.service
+sudo systemctl stop virtuapp.socket
+sudo systemctl stop virtuapp
+sudo systemctl stop nginx

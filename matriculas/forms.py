@@ -128,7 +128,7 @@ ESTADOS_UF = (
 class PoloForm(forms.ModelForm):
     nome = forms.CharField()
     estado = forms.CharField(widget=forms.Select(choices=ESTADOS_UF))
-    active = forms.BooleanField()
+    active = forms.BooleanField(required=False)
     
     
     class Meta:
@@ -148,7 +148,7 @@ class CampanhaForm(forms.ModelForm):
     nome = forms.CharField()
     data_inicio = forms.DateField(widget=DateInput())
     data_fim = forms.DateField(widget=DateInput())
-    active = forms.BooleanField()
+    active = forms.BooleanField(required=False)
     
     class Meta:
         model = cad_campanhas

@@ -60,13 +60,19 @@ urlpatterns = [
     path('relatorios-financeiro/', RelatorioFinanceiro.as_view(), name='relatorio_financeiro'),
     path('relatorios-spacepoint/', RelatorioSpace.as_view(), name='relatorio_spacepoint'),
     path('relatorios-campanha/', RelatorioCampanha.as_view(), name='relatorio_campanha'),
+    
+    #Activate/Deactivate
     path('user/<int:id>/activate/', UserActivateView.as_view(), name='user_activate'),
     path('user/<int:id>/deactivate/', UserDeactivateView.as_view(), name='user_deactivate'),
     path('activate_ranking/<int:id>/', UserActivateRanking.as_view(), name='activate_ranking'),
     path('deactivate_ranking/<int:id>/', UserDeactivateRanking.as_view(), name='deactivate_ranking'),
-    
+    path('campanha/<int:id>/activate/', CampanhaActivateView.as_view(), name='campanha_activate'),
+    path('campanha/<int:id>/deactivate/', CampanhaDeactivateView.as_view(), name='campanha_deactivate'),
+    path('processo/<int:id>/activate/', ProcessoActivateView.as_view(), name='processo_activate'),
+    path('processo/<int:id>/deactivate/', ProcessoDeactivateView.as_view(), name='processo_deactivate'),
+    path('polo/<int:id>/activate/', PoloActivateView.as_view(), name='polo_activate'),
+    path('polo/<int:id>/deactivate/', PoloDeactivateView.as_view(), name='polo_deactivate'),
    
- 
-    
+   
 ]
 

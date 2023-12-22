@@ -40,7 +40,7 @@
           <th class="text-center align-middle">Data Final</th>
           <th class="text-center align-middle">Ativo</th>
           <th class="text-end align-middle">EDITAR</th>
-          <th class="text-end align-middle">EXCLUIR</th>
+          <th class="text-end align-middle"></th>
         </tr>
       </thead>
       <tbody>
@@ -58,9 +58,16 @@
                     {% endif %}                         
               </td>
             <td class="text-end align-middle"><a href = "{{ cad_processo.get_absolute_url }}"><button type="button" class="btn btn-primary">Editar</button></td>
-              <form method="POST" action="{{ cad_processo.get_delete_url }}">{% csrf_token %}
+              <!-- <form method="POST" action="{{ cad_processo.get_delete_url }}">{% csrf_token %}
                 <td class="text-end align-middle"><button type="submit" class="btn btn-danger">Excluir</button></td>
-              </form>
+              </form> -->
+              <td class="text-end">
+                {% if cad_processo.ativo %}
+                  <a href="{% url 'matriculas:processo_deactivate' cad_processo.id %}" class="btn btn-danger">Desativar</a>
+                  {% else %}
+                  <a href="{% url 'matriculas:processo_activate' cad_processo.id %}" class="btn btn-success">Ativar</a>
+                  {% endif %}
+          </td> 
           </tr>
         {% endfor %}
       </tbody>
