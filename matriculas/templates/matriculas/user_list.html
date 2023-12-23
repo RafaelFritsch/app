@@ -79,7 +79,7 @@
                     {% if user.userprofile.ranking %}
                         <form method="post" action="{% url 'matriculas:deactivate_ranking' user.id %}" style="display: inline;">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Desativar</button>
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Desativar</button>
                         </form>
                     {% else %}
                         <form method="post" action="{% url 'matriculas:activate_ranking' user.id %}" style="display: inline;">

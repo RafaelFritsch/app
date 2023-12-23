@@ -1,1 +1,14 @@
 venv/
+
+db.sqlite3
+
+gunicorn_redenc.txt
+nginx-http redenc.txt
+nginx-https.txt
+atalhos.txt
+
+docker swarm/
+
+*.pyc
+
+app/crm/settings.py

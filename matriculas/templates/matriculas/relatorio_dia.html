@@ -20,7 +20,7 @@
     <h1 class="mb-0">MOVIMENTO DO DIA</h1>
   </div>
   <div >
-    <form method="get" action="">
+    <form method="get" action="" id="dateNow">
         <div class="form-group">
             <label for="{{ date_select_form.selected_date.id_for_label }}"></label>
             {{date_select_form.selected_date }}
@@ -105,9 +105,34 @@
     </div>
   
   
-  
 
     <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Verifica se o formulário já foi enviado
+        if (!localStorage.getItem('formSubmitted')) {
+          // Obtém a data atual no formato YYYY-MM-DD
+          var today = new Date().toISOString().slice(0, 10);
+          
+          // Preenche o campo de data com a data atual
+          document.getElementById("id_selected_date").value = today;
+    
+          // Marca o formulário como enviado
+          localStorage.setItem('formSubmitted', 'true');
+    
+          // Envie o formulário ao carregar a página
+          document.getElementById("dateNow").submit();
+        }
+      });
+    </script>
+
+
+
+
+
+    <script>
+
+  
+
       document.addEventListener('DOMContentLoaded', function () {
         // Crie um script para configurar o gráfico
         var ctx = document.getElementById('matriculasChart').getContext('2d');
@@ -149,6 +174,9 @@
           },
         });
       });
+
+
+    
     </script>
 
 
@@ -189,6 +217,9 @@
     }
   });
 </script>
+
+
+
 
 
 {% endblock %}
