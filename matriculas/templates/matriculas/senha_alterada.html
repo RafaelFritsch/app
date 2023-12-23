@@ -1,0 +1,27 @@
+{% extends 'model-page.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+
+
+
+<h1> senha alterada</h1>
+<div class="container mt-5">
+    {% if messages %}
+        {% for message in messages %}
+            {% if 'Sua senha foi alterada com sucesso.' in message %}
+                <div class="alert alert-success" role="alert">
+                    <strong>Sucesso!</strong> Sua senha foi alterada com sucesso.
+                </div>
+            {% elif 'Houve um erro ao alterar sua senha.' in message %}
+                <div class="alert alert-danger" role="alert">
+                    <strong>Erro!</strong> Houve um erro ao alterar sua senha. Por favor, corrija os erros abaixo.
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</div>
+
+{%endblock%}

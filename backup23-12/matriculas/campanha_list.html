@@ -1,0 +1,112 @@
+{% extends 'model-page.html'%}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+
+<div class="redenc mb-3 d-flex align-items-center text-center justify-content-between">
+  <img src="{% static 'images/virtua_full.svg' %}" alt="Imagem" style="width: auto; height: 50px; margin-right: 10px;">
+  <div class="mx-auto">
+      <div class="d-flex">
+          <h1>CAMPANHAS</h1> 
+      </div>
+  </div>
+  <img src="{% static 'images/branco.svg' %}" alt="" style="width: auto; height: 50px; margin-right: 10px;">
+</div>
+<div style="scale: 0.96;">
+<form method="GET" action="">
+  <div class="d-flex align-items-center">
+      <div class="p-2 flex-grow-1">
+          <input class="form-control" type="text" name="name" value="{{ search_query }}" placeholder="Buscar nome...">
+      </div>
+      <div class="p2">
+          <button type="submit" class="btn btn-primary">Buscar</button>
+      </div>
+  </div>
+</form>
+<div class="pt-4">
+<a href="{% url 'matriculas:campanha_new' %}"
+    <button type="button" class="btn btn-success" style="float: right; margin-bottom: 10px">Nova Campanha</button>
+  </a>
+</div>
+
+<table class="table table table-striped table-hover table-sm">
+    <thead>
+        <tr>
+          <th class="text-start align-middle">Nome</th>
+          <th class="text-center align-middle">Data Inicial</th>
+          <th class="text-center align-middle">Data Final</th>
+          <th class="text-center align-middle">Status</th>
+          <th class="text-end align-middle">EDITAR</th>
+          <th class="text-end align-middle"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cad_campanha in object_list %}
+          <tr>
+            <td class="text-start align-middle">{{cad_campanha.nome}}</td>
+            <td class="text-center align-middle">{{cad_campanha.get_data_inicio_camp}}</td>
+            <td class="text-center align-middle">{{cad_campanha.get_data_fim_camp}}</td>
+            <td class="text-center align-middle">
+              {% if cad_campanha.active %}
+                <span class="badge bg-success">Ativo</span>
+              {% else %}
+                <span class="badge bg-danger">Inativo</span>
+              {% endif %}
+            </td>
+            <td class="text-end align-middle"><a href = "{{ cad_campanha.get_absolute_url }}"><button type="button" class="btn btn-outline-primary btn-sm">Editar</button></td>
+              <!-- <form method="POST" action="{{ cad_campanha.get_delete_url }}">{% csrf_token %}
+                <td class="text-end align-middle"><button type="submit" class="btn btn-danger">Excluir</button></td>
+              </form> -->
+            
+              <td class="text-end">
+                  {% if cad_campanha.active %}
+                    <a href="{% url 'matriculas:campanha_deactivate' cad_campanha.id %}" class="btn btn-outline-danger btn-sm">Desativar</a>
+                    {% else %}
+                    <a href="{% url 'matriculas:campanha_activate' cad_campanha.id %}" class="btn btn-outline-success btn-sm">Ativar</a>
+                    {% endif %}
+            </td> 
+
+          </tr>
+        {% endfor %}
+      </tbody>
+    
+  </table>
+
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    {% endif %}
+  
+    {% for object in page_obj.paginator.page_range %}
+      <li class="page-item"><a class="page-link" href="?page={{ object }}">{{ object }}</a></li>
+    {% endfor %}
+  
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+  
+</div>
+{% endblock %}

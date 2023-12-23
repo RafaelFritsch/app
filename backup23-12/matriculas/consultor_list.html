@@ -1,0 +1,77 @@
+{% extends 'model-page.html'%}
+
+{% block content %}
+<h1>Usuários</h1>
+
+<a href="{% url 'matriculas:consultor_new' %}"
+    <button type="button" class="btn btn-success" style="float: right; margin-bottom: 10px">Novo Consultor</button>
+  </a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+          <th scope="col">id</th>
+          <th scope="col">Nome</th>
+          <th scope="col">Email</th>
+          <th scope="col">Data Nascimento</th>
+          <th scope="col">Telefone</th>
+          <th scope="col">Ativo</th>
+          <th scope="col">EDITAR</th>
+          <th scope="col">EXCLUIR</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for consultor in consultor_list %}
+          <tr>
+            <td>{{consultor.id}}</td>
+            <td>{{consultor.get_full_name}}</td>
+            <td>{{consultor.email}}</td>
+            <td>{{consultor.get_data_nascimento}}</td>
+            <td>{{consultor.get_full_phone}}</td>
+            <td>{{consultor.active}}</td>
+            <td><a href = "{{ consultor.get_absolute_url }}"><button type="button" class="btn btn-primary">Editar</button></a></td>
+            <form method="POST" action="{{ consultor.get_delete_url }}">{% csrf_token %}
+              <td><button type="submit" class="btn btn-danger">Excluir</button></td>
+            </form>
+          </tr>
+        {% endfor %}
+      </tbody>
+    
+  </table>
+
+
+  <ul class="pagination">
+    {%if  page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    {% endif %}
+  
+    {% for object in page_obj.paginator.page_range %}
+      <li class="page-item"><a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a></li>
+    {% endfor %}
+  
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page= {{ page_obj.next_page_number }}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    {% endif %}
+    </ul>
+  
+
+{% endblock %}

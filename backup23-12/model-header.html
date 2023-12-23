@@ -66,30 +66,26 @@
         </li>
         
         <li class="nav-item">
-            <a class="nav-link btn btn-outline-success btn-sm" href="{%url 'matriculas:matriculas_new'%}">Nova Matrícula</a>
+            <a class="nav-link highlight-link" href="{%url 'matriculas:matriculas_new'%}">Nova Matrícula</a>
         </li>
     </ul>
     <ul class="navbar-nav ms-auto ml-2">
-        <div class=" d-flex align-middle">
-            <li class="nav-item">
-                <a class="nav-link">
-            {% if request.user.is_authenticated %}
-                Usuário: <strong>{{ request.user.first_name }}</strong> 
-            {% endif %}
-                </a>
-            </li>
-            <li class="nav-item ms-3 borde border-primary">
-                <a class="nav-link btn btn-outline-danger btn-sm" href="{% url 'logout' %}">Sair</a>
-            </li>
-            <li class="nav-item ms-3">
-                <a class="nav-link btn btn-outline-primary btn-sm" href="{%url 'matriculas:user_profile'%}">Perfil</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link">
-                <span class="navbar-text"></span>
-                </a>
-            </li>
-        </div>
+        <li class="nav-item">
+            <a class="nav-link">
+        {% if request.user.is_authenticated %}
+            <span class="navbar-text">Olá,  {{ request.user.first_name }}</span>
+        {% endif %}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Sair</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link">
+            <span class="navbar-text"></span>
+            </a>
+        </li>
+        
     </ul>
 
 </nav>

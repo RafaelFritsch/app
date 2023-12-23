@@ -1,0 +1,146 @@
+{% extends 'model-page.html'%}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+
+<div class="redenc mb-3 d-flex align-items-center text-center justify-content-between">
+  <img src="{% static 'images/virtua_full.svg' %}" alt="Imagem" style="width: auto; height: 50px; margin-right: 10px;">
+  <div class="mx-auto">
+      <div class="d-flex">
+          <h1>CONSULTORES</h1> 
+      </div>
+  </div>
+  <img src="{% static 'images/branco.svg' %}" alt="" style="width: auto; height: 50px; margin-right: 10px;">
+</div>
+
+<div style="scale: 0.96;">
+<form method="GET" action="">
+  <div class="d-flex align-items-center">
+      <div class="p-2 flex-grow-1">
+          <input class="form-control" type="text" name="name" value="{{ search_query }}" placeholder="Buscar por nome ...">
+      </div>
+      <div class="p2">
+          <button type="submit" class="btn btn-primary">Buscar</button>
+      </div>
+  </div>
+</form>
+
+
+<div class="pt-4">
+  <a href="{% url 'matriculas:user_new' %}"
+  <button type="button" class="btn btn-success" style="float: right; margin-bottom: 10px">Novo Usuário</button>
+  </a>
+</div>
+
+
+  <table class="table table-striped table-hover table-sm">
+    <thead>
+        <tr>
+            <th class="text-start">Nome</th>
+            <th class="text-start">Usuário</th>
+            <th class="text-start">Email</th>
+            <th class="text-start">Polo</th>
+            <th class="text-start">Perfil</th>
+            <th class="text-start">Ranking</th>
+            <th class="text-center">Acesso</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in user_list %}
+            <tr>
+                <td class="text-start">{{ user.first_name }} {{ user.last_name }}</td>
+                <td class="text-start">{{ user.username }}</td>
+                <td class="text-start">{{ user.email }}</td>
+                <td class="text-start">
+                    {% if user.userprofile %}
+                        {{ user.userprofile.polo.nome }}
+                    {% else %}
+                        Sem polo vinculado
+                    {% endif %}
+                </td>
+                
+                <td class="text-start">
+                  {% if user.userprofile %}
+                      {% if user.userprofile.cargo == 'U' %}
+                          Usuário
+                      {% elif user.userprofile.cargo == 'A' %}
+                          Administrativo
+                      {% else %}
+                          {{ user.userprofile.cargo }}
+                      {% endif %}
+                  {% else %}
+                      Sem perfil de usuário
+                  {% endif %}
+              </td>
+              <td class="text-start">
+                {% if not user.is_superuser %}
+                    {% if user.userprofile.ranking %}
+                        <form method="post" action="{% url 'matriculas:deactivate_ranking' user.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Desativar</button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'matriculas:activate_ranking' user.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-success btn-sm">Ativar</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </td>
+            
+       
+            
+              <td class="text-center">
+                {% if not user.is_superuser %} {# Adicionando a condição para ocultar se for superadmin #}
+                  {% if user.is_active %}
+                      <a href="{% url 'matriculas:user_deactivate' user.id %}" class="btn btn-outline-danger btn-sm">Desativar</a>
+                  {% else %}
+                      <a href="{% url 'matriculas:user_activate' user.id %}" class="btn btn-outline-success btn-sm">Ativar</a>
+                  {% endif %}
+                {% endif %}
+            </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+  <ul class="pagination">
+    {%if  page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    {% endif %}
+  
+    {% for object in page_obj.paginator.page_range %}
+      <li class="page-item"><a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a></li>
+    {% endfor %}
+  
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page= {{ page_obj.next_page_number }}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    {% endif %}
+    </ul>
+  
+</div>
+{% endblock %}

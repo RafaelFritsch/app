@@ -1,0 +1,19 @@
+{% extends 'model-page.html'%}
+
+{% block content %}
+
+
+<!-- seu_template.html -->
+{% for processo in processos %}
+    <p>Número do Processo: {{ processo.numero_processo }}</p>
+    <p>Ano do Processo: {{ processo.ano_processo }}</p>
+    <p>Data Inicial: {{ processo.get_data_inicial }}</p>
+    <p>Data Final: {{ processo.get_data_final }}</p>
+    <p><a href="{{ processo.get_absolute_url }}">Editar</a></p>
+    <p><a href="{{ processo.get_delete_url }}">Excluir</a></p>
+    <hr>
+{% endfor %}
+
+
+
+{% endblock %}

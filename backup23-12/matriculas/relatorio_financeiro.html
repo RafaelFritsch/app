@@ -73,7 +73,7 @@
             <th class="text-start align-middle">Consultor</th>
             <th class="text-center align-middle">Soma <p>1ª Mensalidade</th>
             <th class="text-center align-middle">Soma <p>2ª Mensalidade</th>
-
+            <th class="text-center align-middle">Total <p> Desconto</th>
             <th class="text-center align-middle">Ticket <p>  1ª Mensalidade</th>
             <th class="text-center align-middle">Ticket <p> 2ª Mensalidade </th>
             <th class="text-center align-middle">Média Desconto<p> por Aluno</th>
@@ -86,7 +86,7 @@
                 <td class="text-start align-middle">{{ data.user.first_name }} {{ data.user.last_name }}</td>
                 <td class="text-center align-middle">R$ {{ data.total_valor_mensalidade|floatformat:2 }}</td>
                 <td class="text-center align-middle">R$ {{ data.total_desconto_polo|floatformat:0 }}</td>
-         
+                <td class="text-center align-middle">{{ data.total_desconto_total|floatformat:2 }} %</td>
                 <td class="text-center align-middle">R$ {{ data.avg_valor_mensalidade|floatformat:2 }}</td>
                 <td class="text-center align-middle">R$ {{ data.avg_desconto_polo|floatformat:2 }}</td>
                 <td class="text-center align-middle">{{ data.avg_desconto_total|floatformat:0 }} %</td>

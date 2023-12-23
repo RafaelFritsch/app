@@ -1,0 +1,218 @@
+{% extends 'model-page.html'%}
+{% load static %}
+
+{% block content %}
+
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+
+  <div class="redenc mb-3 d-flex  align-items-center ">
+    <img src="{% static 'images/virtua_full.svg' %}" alt="Imagem" style="width: auto; height: 80px; margin-right: 10px;">
+    <div class="mx-auto align-items-center">
+      
+      <div class="d-flex mx-auto">
+        <form method="get">
+          <div class="d-flex align-items-end mb-3">
+            <div class="p-3 flex-grow-1 ">
+              <label for="data_inicial" class="form-label">Data Inicial:</label>
+              <input class="form-control" type="date" name="data_inicial" id="data_inicial">
+            </div>
+            <div class="p-3 flex-grow-1">
+              <label for="data_final" class="form-label">Data Final:</label>
+              <input class="form-control" type="date" name="data_final" id="data_final">
+            </div>
+            <div class="p-3 flex-grow-1">
+              <label class="form-label" for="usuario">Consultor(a):</label>
+                <select class="form-select"  name="usuario" id="usuario">
+                   <option  value="">Todos</option>
+                    {% for user in usuarios %}
+                      <option  value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                  </select>
+            </div>
+            <div class="p-3 ">
+              <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>  
+          </div>
+        </form>
+
+      </div>
+      <div class="d-flex mx-auto justify-content-center">
+        {% if data_inicial %}
+        <div><h3>{{ data_inicial|date:"d/m/Y" }}</h3></div>  
+        {% endif %}
+        {% if data_final %}
+        <div class="ms-3"><h3>até</h3></div> 
+        <div class="ms-3"><h3>{{ data_final|date:"d/m/Y" }}</h3></div>
+        {% endif %}
+        {% if usuario_id %}
+        <div class="ms-3"><h3>{{ usuario_first_name }} {{ usuario_last_name }}</h3></div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="align-items-right">
+      <img src="{% static 'images/branco.svg' %}" alt="" style="width: auto; height: 80px; margin-right: 10px;">
+    </div>
+
+  </div>
+
+
+<div style="scale: 0.96;">
+
+<form>
+  <div class="d-flex align-items-center">
+    <div class="p-2 flex-grow-1">
+      <input class="form-control" type="text" name="name" placeholder="Buscar por nome ...">
+    </div>
+    <div class="p2">
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>  
+  </div>
+</form>
+
+<table class="table table-striped mt-4">
+    <thead>
+        <tr>
+          <th class="text-start text-sm bg-secondary align-middle align-items-center">DATA</th>
+          <th class="text-start text-sm bg-secondary align-middle align-items-center">NOME DO ALUNO</th>
+          <th class="text-center text-sm bg-secondary align-middle align-items-center">RA</th>
+          <th class="text-start text-sm bg-secondary align-middle align-items-center">TIPO DE CURSO</th>
+          <th class="text-start text-sm bg-secondary align-middle align-items-center">CURSO</th>
+          <th class="text-start text-sm bg-secondary align-middle align-items-center">CAMPANHA</th>
+          <th class="text-center text-sm bg-secondary align-middle align-items-center">R$ 1º MENS.</th>
+          <th class="text-center text-sm bg-secondary align-middle align-items-center">R$ 2º MENS.</th>
+          <th class="text-center text-sm bg-secondary align-middle align-items-center">% BOLSA</th>
+          <th class="text-center text-sm bg-secondary align-middle align-items-center">Consultor</th>
+          <th class="bg-secondary"></th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {% for matriculas in matriculas_list %}
+          <tr>
+            <td class="text-start w-11 align-middle align-items-center">{{matriculas.get_data_matricula}}</td>
+            <td class="text-start w-11 align-middle align-items-center">{{matriculas.nome_aluno}}</td>
+            <td class="text-center w-11 align-middle align-items-center">{{matriculas.numero_ra}}</td>
+            <td class="text-start w-11 align-middle align-items-center">{{matriculas.tipo_curso}}</td>
+            <td class="text-start w-11 align-middle align-items-center">{{matriculas.curso}}</td>
+            <td class="text-start w-11 align-middle align-items-center">{{matriculas.campanha}}</td>
+            <td class="text-center w-11 align-middle align-items-center">{{matriculas.valor_mensalidade}}</td>
+            <td class="text-center w-11 align-middle align-items-center">{{matriculas.desconto_polo}}</td>
+            <td class="text-center w-11 align-middle align-items-center">{{matriculas.desconto_total}}</td>
+            <td class="text-center w-11 align-middle align-items-center">{{matriculas.usuario.first_name }} {{matriculas.usuario.last_name }}</td>
+            <td class="text-center w-11">
+              <div class="d-flex justify-content-center align-items-center">
+                <!-- <a href = "{{ matriculas.get_absolute_url }}">
+                  <img src="{% static 'images/edit.png' %}" alt="EDITAR" style="width: 24px; height: auto;">
+                </a>  Libera a edição da matricula / o Editor assume a propriedade da matricula-->
+              
+                <form id="formExclusao" method="POST" action="{{ matriculas.get_delete_url }}">
+                  {% csrf_token %}
+                  <input type="hidden" name="matricula_id" value="{{ matriculas.id }}">
+                  <input type="hidden" name="excluir_arquivo" value="True">
+                  <button type="button" class="btn btn-link text-center" data-bs-toggle="modal" data-bs-target="#confirmacaoExclusaoModal">
+                      <img src="{% static 'images/trash.png' %}" alt="EXCLUIR" style="width: 24px; height: auto;">
+                  </button>
+                    {% if matriculas.arquivos %}
+                      <button type="button" class="btn btn-link" onclick="abrirModal('{{ matriculas.arquivos.url }}')">
+                        <img src="{% static 'images/file.png' %}" alt="ABRIR ARQUIVO" style="width: 24px; height: auto;">
+                      </button>
+                    {% else %}
+                      <img src="{% static 'images/nofile.png' %}" alt="ABRIR ARQUIVO" style="width: 24px; height: auto;">
+                    {% endif %} 
+            </td>
+            </tr>
+          </tr>
+        {% endfor %}
+      </tbody> 
+  </table>
+
+
+  <ul class="pagination">
+  {%if  page_obj.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+  {% else %}
+    <li class="page-item disabled">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+  {% endif %}
+
+  {% for object in page_obj.paginator.page_range %}
+    <li class="page-item"><a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a></li>
+  {% endfor %}
+
+  {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page= {{ page_obj.next_page_number }}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  {% else %}
+    <li class="page-item disabled">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  {% endif %}
+  </ul>
+</div>
+<!-- Modal do Comprovante -->
+<div class="modal fade" id="imagemModal" tabindex="-1" aria-labelledby="imagemModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imagemModalLabel">Imagem da Matrícula</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <img id="imagemModalImagem" class="img-fluid" src="" alt="Imagem da Matrícula">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Nodal Confirmacao de Exclusão -->
+<div class="modal fade" id="confirmacaoExclusaoModal" tabindex="-1" aria-labelledby="confirmacaoExclusaoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmacaoExclusaoModalLabel">Confirmação de Exclusão</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <p>Tem certeza de que deseja excluir esta matrícula?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" onclick="confirmarExclusao()">Confirmar Exclusão</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  var myModal = new bootstrap.Modal(document.getElementById('imagemModal'));
+  var confirmacaoExclusaoModal = new bootstrap.Modal(document.getElementById('confirmacaoExclusaoModal'));
+
+  function abrirModal(imagemUrl) {
+    document.getElementById('imagemModalImagem').src = imagemUrl;
+    myModal.show();
+  }
+
+  
+  function confirmarExclusao() {
+    document.getElementById('formExclusao').submit();
+  }
+</script>
+
+{% endblock %}

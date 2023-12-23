@@ -1,11 +1,10 @@
 from django import forms
 from .models import *
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.utils import timezone
 from django.utils.text import slugify
-from django.utils.translation import gettext as _
 
 
 class DateInput(forms.DateInput):
@@ -266,17 +265,3 @@ class DateRangeForm(forms.Form): #usado no relatorio financeiro
     
 class DateSelectForm(forms.Form): #Usado no movimento diario
     selected_date = forms.DateField(widget=DateInput(attrs={'type': 'date'}), initial=timezone.now().date(), required=False, label="")
-
-
-
-class CustomPasswordChangeForm(PasswordChangeForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Sobrescreva as mensagens de erro
-        self.error_messages['password_incorrect'] = _('Sua senha atual está incorreta.')
-        self.error_messages['password_mismatch'] = _('As senhas digitadas não coincidem.')
-        self.error_messages['password_too_short'] = _('Sua senha deve ter pelo menos 8 caracteres.')
-        self.error_messages['password_entirely_numeric'] = _('Sua senha não pode ser totalmente numérica.')
-        self.error_messages['password_common_sequences'] = _('Sua senha não pode ser uma senha comum.')
-        self.error_messages['password_too_similar'] = _('Sua senha não pode ser muito semelhante às suas informações pessoais.')

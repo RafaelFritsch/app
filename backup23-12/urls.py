@@ -60,7 +60,6 @@ urlpatterns = [
     path('relatorios-financeiro/', RelatorioFinanceiro.as_view(), name='relatorio_financeiro'),
     path('relatorios-spacepoint/', RelatorioSpace.as_view(), name='relatorio_spacepoint'),
     path('relatorios-campanha/', RelatorioCampanha.as_view(), name='relatorio_campanha'),
-    path('user-profile/', UserProfileView.as_view(), name='user_profile'),
     
     #Activate/Deactivate
     path('user/<int:id>/activate/', UserActivateView.as_view(), name='user_activate'),
@@ -74,8 +73,6 @@ urlpatterns = [
     path('polo/<int:id>/activate/', PoloActivateView.as_view(), name='polo_activate'),
     path('polo/<int:id>/deactivate/', PoloDeactivateView.as_view(), name='polo_deactivate'),
    
-   #Alterar senha
-   path('alterar-senha/', CustomPasswordChangeView.as_view(), name='alterar_senha'),
-   path('senha-alterada/', senha_alterada, name='senha_alterada'),
-]   
+   
+]
 

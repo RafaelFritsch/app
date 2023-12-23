@@ -17,52 +17,103 @@
 </head>
 
 <body>
-   <div class="d-flex justify-content-center align-items-center vh-100">
-      <div class="row justify-content-between">
-         <div class="col">
-            <img class="img-fluid" src="https://s3miniora.virtuacrm.app/virtuacrm/LogoBRBL.svg">
-            <!-- <img class="img-fluid" src="{% static 'images/logoBRBL.svg' %}"> -->
-         </div>
-         <div class="col">
-            <div class="login-form">
-               <form action="submit", method="POST">{% csrf_token %}
-                  <div class="form-group">
-                     <label><b>Usuário</b></label>
-                     <input type="text" class="form-control"  placeholder="Usuário" name="username">
-                  </div>
-                  <div class="form-group">
-                     <label><b>Senha</b></label>
-                     <input type="password" class="form-control" placeholder="Senha" name="password">
-                  </div>
-                  {% if messages %}
-                     {% for message in messages %}
-                        <div class="alert alert-danger">{{ message }}</div>
-                     {% endfor %}
 
-                  {% endif %}
-                  <div>
-                     <button type="submit" class="btn btn-secondary">Login</button>
-                  </div>
-               </form>
-            </div>
-         </div>    
+   <div class="login-dark">
+      <form action="submit", method="POST">{% csrf_token %}
+          
+          <img class="img-fluid illustration" src="https://s3miniora.virtuacrm.app/virtuacrm/LogoBRBL.svg">
+          
+          <div class="form-group"><input type="text" class="form-control"  placeholder="Usuário" name="username"></div>
+          <div class="form-group"><input type="password" class="form-control" placeholder="Senha" name="password"></div>
+          {% if messages %}
+          {% for message in messages %}
+             <div class="alert alert-danger">{{ message }}</div>
+          {% endfor %}
+
+         {% endif %}
+          <div class="form-group"><button class="btn btn-primary btn-block" type="submit">Entrar</button></div><a href="#" class="forgot"></a></form>
+  </div>
+
+
+
+
 </body>
 
 <style>
-   body {
-       background: linear-gradient(to right, #022142, #08E4FC);
-       /* Substitua #007BFF e #6C757D pelos códigos de cor desejados para o degradê */
-       height: 100vh;
-       margin: 0;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-   }
 
-   /* Opcional: Estilo para o conteúdo centralizado na tela */
-   .conteudo-centralizado {
-       text-align: center;
-       color: white;
-   }
+
+.login-dark {
+  height:1000px;
+  background: linear-gradient(to top, #20282b, #cedae6);
+  background-size:cover;
+  position:relative;
+}
+
+.login-dark form {
+  max-width:420px;
+  width:90%;
+  background: linear-gradient(to bottom, #0f4053, #1E90FF);
+  padding:40px;
+  border-radius:20px;
+  transform:translate(-50%, -50%);
+  position:absolute;
+  top:50%;
+  left:50%;
+  color:#fff;
+  box-shadow:3px 3px 4px rgba(0,0,0,0.2);
+}
+
+.login-dark .illustration {
+  text-align:center;
+  padding:15px 0 20px;
+  font-size:100px;
+  color:#b1b7be;
+}
+
+.login-dark form .form-control {
+  background:none;
+  border:none;
+  border-bottom:1px solid #434a52;
+  border-radius:0;
+  box-shadow:none;
+  outline:none;
+  color:inherit;
+}
+
+.login-dark form .btn-primary {
+  background:#232c38;
+  border:none;
+  border-radius:4px;
+  padding:11px;
+  box-shadow:none;
+  margin-top:26px;
+  text-shadow:none;
+  outline:none;
+}
+
+.login-dark form .btn-primary:hover, .login-dark form .btn-primary:active {
+  background:#0b4d39;
+  outline:none;
+}
+
+.login-dark form .forgot {
+  display:block;
+  text-align:center;
+  font-size:12px;
+  color:#6f7a85;
+  opacity:0.9;
+  text-decoration:none;
+}
+
+.login-dark form .forgot:hover, .login-dark form .forgot:active {
+  opacity:1;
+  text-decoration:none;
+}
+
+.login-dark form .btn-primary:active {
+  transform:translateY(1px);
+}
+
+
 </style>
 </html>

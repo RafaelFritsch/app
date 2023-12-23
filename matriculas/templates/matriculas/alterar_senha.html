@@ -1,0 +1,58 @@
+{% extends 'model-page.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/matnew.css' %}">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<div class="centered-form">
+    <h2>Alterar Senha</h2>
+    
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'matriculas:alterar_senha' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Alterar Senha</button>
+    </form>
+
+    
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <!-- Modal content... -->
+    </div>
+
+    <!-- Modal de Erro -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <!-- Modal content... -->
+    </div>
+
+    <!-- Adicione o script para exibir o modal após o envio do formulário -->
+    <script>
+        $(document).ready(function(){
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'Sua senha foi alterada com sucesso.' in message %}
+                        $('#successModal').modal('show');
+                    {% elif 'Houve um erro ao alterar sua senha.' in message %}
+                        $('#errorModal').modal('show');
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
+
+</div>
+
+{% endblock %}

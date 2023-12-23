@@ -10,10 +10,8 @@ from .models import *
 from .forms import *
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.contrib.auth.views import PasswordChangeView
 import os
 from django.contrib.auth.models import Group
 from django.utils import timezone
@@ -21,7 +19,7 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import RedirectView, DetailView
+from django.views.generic import RedirectView
 from django.http import HttpResponse, JsonResponse
 
 
@@ -103,40 +101,6 @@ class UserListView(LoginRequiredMixin, ListView):
         
         # Adiciona os rankings de cada usuário ao contexto
         context['rankings'] = {profile.user_id: profile.ranking for profile in user_profiles}
-
-        return context
-    
-    
-class UserProfileView(LoginRequiredMixin, DetailView):
-    template_name = 'matriculas/user_profile.html'
-    queryset = User.objects.all()
-    context_object_name = 'user'
-
-    def get_object(self, queryset=None):
-        return self.request.user  # Assume que o perfil do usuário está vinculado ao UserProfile
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        # Informações específicas do usuário logado
-        user = self.request.user
-        context['nome'] = user.get_full_name()
-        context['usuario'] = user.username
-        context['email'] = user.email
-
-        # Informações adicionais (polo, cargo, ranking)
-        try:
-            # Se UserProfile não estiver configurado para ser estendido
-            # com um modelo OneToOneField para User, ajuste essa parte
-            user_profile = UserProfile.objects.get(user=user)
-            context['polo'] = user_profile.polo  # Ajuste conforme necessário
-            context['cargo'] = user_profile.cargo
-            context['ranking'] = user_profile.ranking
-        except UserProfile.DoesNotExist:
-            # Lidere com o caso em que UserProfile não existe para o usuário
-            context['polo'] = None
-            context['cargo'] = None
-            context['ranking'] = None
 
         return context
 
@@ -295,7 +259,7 @@ class UserActivateView(View):
         user = get_object_or_404(User, id=id)
         user.is_active = True
         user.save()
-        return RedirectView.as_view(url=reverse_lazy('matriculas:user_rank'))(request)
+        return RedirectView.as_view(url=reverse_lazy('matriculas:user_list'))(request)
 
 class UserDeactivateView(View):
     def get(self, request, id):
@@ -320,21 +284,6 @@ class UserDeactivateRanking(View):
 
 
 
-class CustomPasswordChangeView(PasswordChangeView):
-    form_class = CustomPasswordChangeForm
-    template_name = 'matriculas/alterar_senha.html'
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Sua senha foi alterada com sucesso.')
-        return redirect('matriculas:user_profile')  # Atualize para o nome da URL correta
-
-    def form_invalid(self, form):
-        messages.error(self.request, 'Houve um erro ao alterar sua senha. Por favor, corrija os erros abaixo.')
-        return super().form_invalid(form)
-
-def senha_alterada(request):
-    messages_to_render = messages.get_messages(request)
-    return render(request, 'matriculas/senha_alterada.html', {'messages': messages_to_render})
 
 
 class PoloNewView(LoginRequiredMixin, CreateView):
@@ -672,8 +621,6 @@ def RankView(request):
 
         context['contagem_matriculas'] = []
 
-
-
         for usuario in context['usuarios']:
             user_profile = UserProfile.objects.filter(user=usuario, ranking=True).first()
             
@@ -788,7 +735,6 @@ class RelatorioDia(LoginRequiredMixin, ListView):
 
          # Processar os dados do formulário
         form = DateSelectForm(self.request.GET)
-        
         if form.is_valid():
             selected_date = form.cleaned_data['selected_date']
         else:
@@ -910,26 +856,16 @@ class RelatorioFinanceiro(LoginRequiredMixin,FormView, ListView):
         
                 # Verifica se há pelo menos um usuário antes de calcular o máximo
         if user_data:
-            # Filtra os usuários que têm total_matriculas diferente de zero
-            user_data_with_matriculas = [user for user in user_data if user['total_matriculas'] != 0]
-
-            if user_data_with_matriculas:
-                # Encontrar o usuário com a média mais alta
-                user_with_highest_avg_1mens = max(user_data_with_matriculas, key=lambda user: user['avg_valor_mensalidade'])
-                user_with_highest_avg_2mens = max(user_data_with_matriculas, key=lambda user: user['avg_desconto_polo'])
-                user_with_highest_avg_desc = min(user_data_with_matriculas, key=lambda user: user['avg_desconto_total'])
-            else:
-                # Se nenhum usuário tiver total_matriculas diferente de zero, define os valores como None
-                user_with_highest_avg_1mens = None
-                user_with_highest_avg_2mens = None
-                user_with_highest_avg_desc = None
+            # Encontrar o usuário com a média mais alta
+            user_with_highest_avg_1mens = max(user_data, key=lambda user: user['avg_valor_mensalidade'])
+            user_with_highest_avg_2mens = max(user_data, key=lambda user: user['avg_desconto_polo'])
+            user_with_highest_avg_desc = min(user_data, key=lambda user: user['avg_desconto_total'])
 
         # Adiciona os dados ao contexto da view
         context['user_data'] = user_data
         context['user_with_highest_avg_1mens'] = user_with_highest_avg_1mens
         context['user_with_highest_avg_2mens'] = user_with_highest_avg_2mens
         context['user_with_highest_avg_desc'] = user_with_highest_avg_desc
-
 
         return context
  
@@ -940,7 +876,116 @@ class RelatorioFinanceiro(LoginRequiredMixin,FormView, ListView):
 #TODO: GERAL : INCLUIR SPACEPOINT NO RESUMO MENSAL 
 
 #TODO: Criar metodo para retirar os pontos
+# Codigo que quebra com datas diferentes de inicio e fim
+# class RelatorioSpace(LoginRequiredMixin, ListView):
+#     template_name = 'matriculas/relatorio_spacepoint.html'
+#     model = Matriculas
+    
 
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+        
+#         # Alteração: Obtém todas as opções de processo disponíveis
+#         context['processos_disponiveis'] = cad_processo.objects.all()
+
+#         # Obtém o número do processo e ano selecionado a partir dos parâmetros GET
+#         filtro_processo_ano = self.request.GET.get('filtro_processo_ano', None)
+
+#         # Inicializa as datas de início e fim do processo
+#         data_inicial_processo = datetime.now().date()
+#         data_final_processo = datetime.now().date()
+        
+#         # Alteração: Obtém as datas do último processo cadastrado
+#         ultimo_processo = cad_processo.objects.order_by('-data_final_processo').first()
+#         if ultimo_processo:
+#             data_inicial_processo = ultimo_processo.data_inicial_processo
+#             data_final_processo = ultimo_processo.data_final_processo
+
+        
+#         # Se filtro_processo_ano não estiver definido, incluir tanto processos ativos quanto inativos
+#         if not filtro_processo_ano:
+#             processos = cad_processo.objects.all()
+#             data_inicial_processo = processos.aggregate(Min('data_inicial_processo'))['data_inicial_processo__min']
+#             data_final_processo = processos.aggregate(Max('data_final_processo'))['data_final_processo__max']
+#         else:
+#             numero_processo, ano_processo = filtro_processo_ano.split('/')
+#             processo = cad_processo.objects.get(numero_processo=numero_processo, ano_processo=ano_processo)
+
+#             # Obtém as datas de início e fim do processo
+#             data_inicial_processo = processo.data_inicial_processo
+#             data_final_processo = processo.data_final_processo
+
+#         context['processos'] = cad_processo.objects.all()
+        
+#         context['data_inicial_processo'] = data_inicial_processo
+#         context['data_final_processo'] = data_final_processo
+#         context['filtro_processo_ano'] = filtro_processo_ano
+        
+#         context['exibir_resultados'] = 'filtro_processo_ano' in self.request.GET
+
+#         # Obtém a lista de usuários e as matrículas para cada usuário no período selecionado
+#         usuarios = User.objects.filter(
+#             matriculas__processo_sel__in=context['processos'],
+#             matriculas__data_matricula__range=[data_inicial_processo, data_final_processo]
+#         ).distinct()
+
+#         total_matriculas_por_usuario = []
+#         for usuario in usuarios:
+#             matriculas_usuario = Matriculas.objects.filter(
+#                 usuario=usuario,
+#                 processo_sel__in=context['processos'],
+#                 data_matricula__range=[data_inicial_processo, data_final_processo]
+#             )
+#             total_matriculas = matriculas_usuario.count()
+#             # Dicionário para armazenar o total de matrículas por mês
+#             total_matriculas_por_mes = {}
+
+#             # Iterar sobre todos os meses no período do processo seletivo
+#             current_date = data_inicial_processo
+#             while current_date <= data_final_processo:
+#                 total_matriculas_por_mes[current_date.strftime('%Y-%m')] = matriculas_usuario.filter(
+#                     data_matricula__year=current_date.year,
+#                     data_matricula__month=current_date.month
+#                 ).count()
+
+#                 current_date += relativedelta(months=1)
+
+#             total_matriculas_por_usuario.append({
+#                 'usuario': usuario,
+#                 'total_matriculas': total_matriculas,
+#                 'total_matriculas_por_mes': total_matriculas_por_mes,
+#             })
+
+#         context['total_matriculas_por_usuario'] = total_matriculas_por_usuario
+#         context['meses_entre_datas'] = self.get_month_range(data_inicial_processo, data_final_processo)
+        
+#         return context
+
+#     def get_month_range(self, start_date, end_date):
+#         current_date = start_date.date()  # Convertendo para date
+#         end_date = end_date.date()  # Convertendo para date
+#         while current_date <= end_date:
+#             yield current_date
+#             # Adiciona um mês
+#             if current_date.month == 12:
+#                 current_date = date(current_date.year + 1, 1, 1)
+#             else:
+#                 current_date = date(current_date.year, current_date.month + 1, 1)
+
+#     def get_queryset(self):
+#             # Obtém o objeto cad_processo selecionado no formulário
+#             filtro_processo_ano = self.request.GET.get('filtro_processo_ano')
+
+#             # Filtra as matrículas com base nas informações selecionadas
+#             queryset = Matriculas.objects.all()
+#             if filtro_processo_ano:
+#                 numero_processo, ano_processo = filtro_processo_ano.split('/')
+#                 processo = cad_processo.objects.get(numero_processo=numero_processo, ano_processo=ano_processo)
+#                 data_inicial = processo.data_inicial_processo
+#                 data_final = processo.data_final_processo
+#                 queryset = queryset.filter(processo_sel__id=processo.id, data_matricula__range=(data_inicial, data_final))
+
+#             return queryset
 
 
 class RelatorioSpace(LoginRequiredMixin, ListView):
@@ -1054,7 +1099,126 @@ class RelatorioSpace(LoginRequiredMixin, ListView):
 
         return queryset
 
+#Funciona com data quebrada
+# class RelatorioCampanha(LoginRequiredMixin, ListView):
+#     template_name = 'matriculas/relatorio_campanha.html'
+#     paginate_by = 8
+#     model = Matriculas
 
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+
+#         # Alteração: Obtém todas as campanhas disponíveis
+#         context['campanhas_disponiveis'] = cad_campanhas.objects.all()
+
+#         # Obtém a campanha selecionada a partir dos parâmetros GET
+#         filtro_campanha = self.request.GET.get('filtro_campanha', None)
+#         print(f"Filtro Campanha: {filtro_campanha}")
+
+#         # Inicializa as datas de início e fim da campanha
+#         data_inicio_campanha = datetime.now().date()
+#         data_fim_campanha = datetime.now().date()
+
+#         # Alteração: Obtém as datas da última campanha cadastrada
+#         ultima_campanha = cad_campanhas.objects.order_by('-data_fim').first()
+#         if ultima_campanha:
+#             data_inicio_campanha = ultima_campanha.data_inicio
+#             data_fim_campanha = ultima_campanha.data_fim
+
+#         # Se filtro_campanha não estiver definido, incluir tanto campanhas ativas quanto inativas
+#         if not filtro_campanha:
+#             campanhas = cad_campanhas.objects.all()
+#             data_inicio_campanha = campanhas.aggregate(Min('data_inicio'))['data_inicio__min']
+#             data_fim_campanha = campanhas.aggregate(Max('data_fim'))['data_fim__max']
+#         else:
+#             campanha = cad_campanhas.objects.get(id=filtro_campanha)
+#             print(f"Campanha Selecionada: {campanha}")
+
+#             # Obtém as datas de início e fim da campanha
+#             data_inicio_campanha = campanha.data_inicio
+#             data_fim_campanha = campanha.data_fim
+
+#         context['campanhas'] = cad_campanhas.objects.all()
+
+#         context['data_inicio_campanha'] = data_inicio_campanha
+#         context['data_fim_campanha'] = data_fim_campanha
+#         context['filtro_campanha'] = filtro_campanha
+
+#         context['exibir_resultados'] = 'filtro_campanha' in self.request.GET
+        
+#         # Obtém a lista de usuários e as matrículas para cada usuário no período selecionado
+#         usuarios = User.objects.filter(
+#             id__in=Subquery(
+#                 Matriculas.objects.filter(
+#                     campanha__in=context['campanhas_disponiveis'],
+#                     data_matricula__range=[data_inicio_campanha, data_fim_campanha],
+#                     usuario=OuterRef('id')
+#                 ).values('usuario')
+#     )
+# )
+
+#         total_matriculas_por_usuario = []
+#         for usuario in usuarios:
+#             matriculas_usuario = Matriculas.objects.filter(
+#                 usuario=usuario,
+#                 campanha__in=context['campanhas_disponiveis'],  #### ERROOO
+#                 data_matricula__range=[data_inicio_campanha, data_fim_campanha]
+#             )
+#             total_matriculas = matriculas_usuario.count()
+#             # Dicionário para armazenar o total de matrículas por mês
+#             total_matriculas_por_mes = {}
+
+#             # Iterar sobre todos os meses no período da campanha
+#             current_date = data_inicio_campanha
+#             while current_date <= data_fim_campanha:
+#                 total_matriculas_por_mes[current_date.strftime('%Y-%m')] = matriculas_usuario.filter(
+#                 data_matricula__gte=current_date,  # Use o operador maior ou igual para incluir o dia atual
+#                 data_matricula__lt=(current_date + relativedelta(months=1))  # Menor que o primeiro dia do próximo mês
+#                 ).count()
+                
+                
+#                 # total_matriculas_por_mes[current_date.strftime('%Y-%m')] = matriculas_usuario.filter(
+#                 #     data_matricula__year=current_date.year,
+#                 #     data_matricula__month=current_date.month
+#                 # ).count()
+
+#                 current_date += relativedelta(months=1)
+
+#             total_matriculas_por_usuario.append({
+#                 'usuario': usuario,
+#                 'total_matriculas': total_matriculas,
+#                 'total_matriculas_por_mes': total_matriculas_por_mes,
+#             })
+
+#         context['total_matriculas_por_usuario'] = total_matriculas_por_usuario
+#         context['meses_entre_datas'] = self.get_month_range(data_inicio_campanha, data_fim_campanha)
+
+#         return context
+
+#     def get_month_range(self, start_date, end_date):
+#         current_date = start_date.date()  # Convertendo para date
+#         end_date = end_date.date()  # Convertendo para date
+#         while current_date <= end_date:
+#             yield current_date
+#             # Adiciona um mês
+#             if current_date.month == 12:
+#                 current_date = date(current_date.year + 1, 1, 1)
+#             else:
+#                 current_date = date(current_date.year, current_date.month + 1, 1)
+
+#     def get_queryset(self):
+#         # Obtém o ID da campanha selecionada no formulário
+#         filtro_campanha = self.request.GET.get('filtro_campanha')
+
+#         # Filtra as matrículas com base nas informações selecionadas
+#         queryset = Matriculas.objects.all()
+#         if filtro_campanha:
+#             campanha = cad_campanhas.objects.get(id=filtro_campanha)
+#             data_inicio = campanha.data_inicio
+#             data_fim = campanha.data_fim
+#             queryset = queryset.filter(campanha__id=campanha.id, data_matricula__range=(data_inicio, data_fim))
+
+#         return queryset
     
 class RelatorioCampanha(LoginRequiredMixin, ListView):
     template_name = 'matriculas/relatorio_campanha.html'

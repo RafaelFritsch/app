@@ -1,0 +1,59 @@
+
+{% extends 'model-page.html'%}
+{% load crispy_forms_tags %}
+{% load static %}
+
+
+{% block content %}
+
+
+
+<div class="container mt-5">
+    <h1>Perfil do Usuário</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm mb-4">
+                <img src="{% static 'images/user.png' %}" alt="Imagem"  style="width: auto; height: 80px; margin-right: 10px;">
+        </div>
+            
+                <p><strong>Nome:</strong> {{ nome }}</p>
+                <p><strong>Usuário:</strong> {{ usuario }}</p>
+                <p><strong>Email:</strong> {{ email }}</p>
+
+                {% if polo %}
+                    <p><strong>Polo:</strong> {{ polo }}</p>
+                {% else %}
+                    <p><strong>Polo:</strong> Não associado a nenhum polo</p>
+                {% endif %}
+
+                {% if cargo %}
+                <p><strong>Perfil:</strong> {% if cargo == 'U' %}Usuário{% elif cargo == 'A' %}Administrador{% else %}{{ cargo }}{% endif %}</p>
+                {% else %}
+                <p><strong>Perfil:</strong> Não possui cargo atribuído</p>
+                {% endif %}
+
+                {% if ranking %}
+                    <p><strong> Visualizado no Ranking:</strong>{% if ranking == True %} Sim{% elif ranking == False %} Não{% else %} {{ ranking }}{% endif %}</p>
+                {% else %}
+                    <p><strong>Vizualizado no Ranking:</strong> Não possui ranking atribuído</p>
+                {% endif %}
+
+            
+
+    </div>
+    
+
+    <a class=" btn btn-outline-primary btn-sm" href="{%url 'matriculas:alterar_senha'%}">altera senha</a>
+
+        {% for message in messages %}
+        <div class="{% if message.tags %}alert alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+</div>
+
+</div>
+
+
+{% endfor %}
+
+{%endblock%}

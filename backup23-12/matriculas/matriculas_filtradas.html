@@ -1,0 +1,40 @@
+{% extends 'model-page.html'%}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+<div class="text-center">
+<h2> Cadastro de Matrículas</h2>
+</div>
+
+    <div>
+    {% if form.errors%}
+        {% for field in form%}
+            {% for error in field.errors %}
+                <div class-="alert alert-danger">
+                    <strong>{{error|escape}}</strong>
+                </div>  
+            {% endfor %}
+
+     
+
+        {%endfor%}
+    {% endif %}
+
+    </div>
+    <div>               
+        <form method="POST" enctype="multipart/form-data">{% csrf_token %} {{ form.media.js }}
+            {{ form|crispy}}
+
+            <input type="hidden" name="tipo_curso" value="{{ form.instance.tipo_curso.id }}" />
+            <button type="submit" class="btn btn-primary">SALVAR</button>
+        </form>
+    </div>
+
+   
+    
+
+
+
+{%endblock%}
