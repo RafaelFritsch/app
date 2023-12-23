@@ -940,9 +940,11 @@ class RelatorioFinanceiro(LoginRequiredMixin,FormView, ListView):
 #TODO: GERAL : INCLUIR SPACEPOINT NO RESUMO MENSAL 
 
 #TODO: Criar metodo para retirar os pontos
-
-
-
+#TODO: Relatorio Matriculas x Campanha ordenar por nome ou total
+#TODO: Relatorio Resumo Mensal ordenar por nome ou total
+#TODO: Ajustar cores do login não ficaram boas
+#TODO: Ajustar tela de perfil ( talvez incluir mais informaçôes)
+#TODO: Faze os novos relatório solicitados por beto , por ano / por Mes etc com os spacepoints
 class RelatorioSpace(LoginRequiredMixin, ListView):
     template_name = 'matriculas/relatorio_spacepoint.html'
     model = Matriculas

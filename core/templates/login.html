@@ -23,8 +23,8 @@
           
           <img class="img-fluid illustration" src="https://s3miniora.virtuacrm.app/virtuacrm/LogoBRBL.svg">
           
-          <div class="form-group"><input type="text" class="form-control"  placeholder="Usuário" name="username"></div>
-          <div class="form-group"><input type="password" class="form-control" placeholder="Senha" name="password"></div>
+          <div class="form-group"><input type="text" class="form-control larger-text"  placeholder="Usuário" name="username"></div>
+          <div class="form-group"><input type="password" class="form-control larger-text" placeholder="Senha" name="password"></div>
           {% if messages %}
           {% for message in messages %}
              <div class="alert alert-danger">{{ message }}</div>
@@ -43,7 +43,7 @@
 
 
 .login-dark {
-  height:1000px;
+  height:100vh;
   background: linear-gradient(to top, #20282b, #cedae6);
   background-size:cover;
   position:relative;
@@ -52,7 +52,7 @@
 .login-dark form {
   max-width:420px;
   width:90%;
-  background: linear-gradient(to bottom, #0f4053, #1E90FF);
+  background: linear-gradient(to bottom, #043f57, #7494b4);
   padding:40px;
   border-radius:20px;
   transform:translate(-50%, -50%);
@@ -60,20 +60,29 @@
   top:50%;
   left:50%;
   color:#fff;
-  box-shadow:3px 3px 4px rgba(0,0,0,0.2);
+  box-shadow:20px 20px 30px rgba(0,0,0,0.2);
 }
+
+.login-dark form .form-control.larger-text {
+        font-size: 22px; /* Defina o tamanho de fonte desejado */
+        color: #ffffff;
+    }
+    .login-dark form .form-control::placeholder {
+        font-size: 22px;
+        color: #fff; /* Defina a cor do placeholder como branca */
+    }
 
 .login-dark .illustration {
   text-align:center;
   padding:15px 0 20px;
-  font-size:100px;
-  color:#b1b7be;
+  font-size:200px;
+  color:#ffffff;
 }
 
 .login-dark form .form-control {
   background:none;
   border:none;
-  border-bottom:1px solid #434a52;
+  border-bottom:1px solid #ffffff;
   border-radius:0;
   box-shadow:none;
   outline:none;
@@ -92,14 +101,14 @@
 }
 
 .login-dark form .btn-primary:hover, .login-dark form .btn-primary:active {
-  background:#0b4d39;
+  background:#32866d;
   outline:none;
 }
 
 .login-dark form .forgot {
   display:block;
   text-align:center;
-  font-size:12px;
+  font-size:20px;
   color:#6f7a85;
   opacity:0.9;
   text-decoration:none;
