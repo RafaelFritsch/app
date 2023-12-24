@@ -1243,7 +1243,7 @@
         "kind": 6,
         "importPath": "matriculas.forms",
         "description": "matriculas.forms",
-        "peekOfCode": "class DateInput(forms.DateInput):\n    input_type = 'date'\nclass CursosForm(forms.ModelForm):\n    nome = forms.CharField()\n    tipo_curso = forms.ModelChoiceField(queryset=tipo_curso.objects.all())\n    active = forms.BooleanField()\n    class Meta:\n        model = cad_cursos\n        fields = (\n            'nome',",
+        "peekOfCode": "class DateInput(forms.DateInput):\n    input_type = 'date'\nclass CursosForm(forms.ModelForm):\n    nome = forms.CharField()\n    tipo_curso = forms.ModelChoiceField(queryset=tipo_curso.objects.all())\n    active = forms.BooleanField(required=False)\n    class Meta:\n        model = cad_cursos\n        fields = (\n            'nome',",
         "detail": "matriculas.forms",
         "documentation": {}
     },
@@ -1252,7 +1252,7 @@
         "kind": 6,
         "importPath": "matriculas.forms",
         "description": "matriculas.forms",
-        "peekOfCode": "class CursosForm(forms.ModelForm):\n    nome = forms.CharField()\n    tipo_curso = forms.ModelChoiceField(queryset=tipo_curso.objects.all())\n    active = forms.BooleanField()\n    class Meta:\n        model = cad_cursos\n        fields = (\n            'nome',\n            'tipo_curso',\n            'active',",
+        "peekOfCode": "class CursosForm(forms.ModelForm):\n    nome = forms.CharField()\n    tipo_curso = forms.ModelChoiceField(queryset=tipo_curso.objects.all())\n    active = forms.BooleanField(required=False)\n    class Meta:\n        model = cad_cursos\n        fields = (\n            'nome',\n            'tipo_curso',\n            'active',",
         "detail": "matriculas.forms",
         "documentation": {}
     },
@@ -1261,7 +1261,7 @@
         "kind": 6,
         "importPath": "matriculas.forms",
         "description": "matriculas.forms",
-        "peekOfCode": "class TipoCursoForm(forms.ModelForm):\n    nome = forms.CharField()\n    pontos = forms.IntegerField()\n    class Meta:\n        model = tipo_curso\n        fields = (\n            'nome',\n            'pontos',\n            'active',\n        )    ",
+        "peekOfCode": "class TipoCursoForm(forms.ModelForm):\n    nome = forms.CharField()\n    pontos = forms.IntegerField()\n    active = forms.BooleanField(required=False)\n    class Meta:\n        model = tipo_curso\n        fields = (\n            'nome',\n            'pontos',\n            'active',",
         "detail": "matriculas.forms",
         "documentation": {}
     },
@@ -1270,7 +1270,7 @@
         "kind": 6,
         "importPath": "matriculas.forms",
         "description": "matriculas.forms",
-        "peekOfCode": "class MatriculasForm(forms.ModelForm):\n    data_matricula = forms.DateTimeField(widget=DateInput())\n    nome_aluno = forms.CharField()\n    numero_ra = forms.CharField(label='RA', required=False)\n    tipo_curso = forms.ModelChoiceField(queryset=tipo_curso.objects.all())\n    curso = forms.ModelChoiceField(queryset=cad_cursos.objects.all())\n    campanha = forms.ModelChoiceField(queryset=cad_campanhas.objects.all()) \n    valor_mensalidade = forms.DecimalField(label='R$ 1º Mens.')\n    desconto_polo = forms.DecimalField(label='R$ 2º Mens.')\n    desconto_total = forms.DecimalField(label='% Bolsa')",
+        "peekOfCode": "class MatriculasForm(forms.ModelForm):\n    data_matricula = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}))\n    nome_aluno = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))\n    numero_ra = forms.CharField(label='RA', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))\n    tipo_curso = forms.ModelChoiceField(queryset=tipo_curso.objects.filter(active=True), widget=forms.Select(attrs={'class': 'form-select'}))\n    curso = forms.ModelChoiceField(queryset=cad_cursos.objects.filter(active=True), widget=forms.Select(attrs={'class': 'form-select'}))\n    campanha = forms.ModelChoiceField(queryset=cad_campanhas.objects.filter(active=True), widget=forms.Select(attrs={'class': 'form-select'})) \n    valor_mensalidade = forms.DecimalField(label='R$ 1º Mens.', min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))\n    desconto_polo = forms.DecimalField(label='R$ 2º Mens.', min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))\n    desconto_total = forms.DecimalField(label='% Bolsa', min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))",
         "detail": "matriculas.forms",
         "documentation": {}
     },
@@ -1891,7 +1891,7 @@
         "kind": 2,
         "importPath": "matriculas.views",
         "description": "matriculas.views",
-        "peekOfCode": "def get_cursos(request):\n    tipo_curso_id = request.GET.get('tipo_curso')\n    cursos = cad_cursos.objects.filter(tipo_curso_id=tipo_curso_id).values('id', 'nome')\n    cursos_list = list(cursos)\n    print(cursos_list)\n    return JsonResponse(cursos_list, safe=False)\nclass UserNewView(LoginRequiredMixin, CreateView):\n    template_name = 'matriculas/user_new.html'\n    form_class = UserForm\n    def form_valid(self, form):",
+        "peekOfCode": "def get_cursos(request):\n    tipo_curso_id = request.GET.get('tipo_curso')\n    cursos = cad_cursos.objects.filter(tipo_curso_id=tipo_curso_id).values('id', 'nome')\n    cursos_list = list(cursos)\n    return JsonResponse(cursos_list, safe=False)\nclass UserNewView(LoginRequiredMixin, CreateView):\n    template_name = 'matriculas/user_new.html'\n    form_class = UserForm\n    def form_valid(self, form):\n        response = super().form_valid(form)",
         "detail": "matriculas.views",
         "documentation": {}
     },

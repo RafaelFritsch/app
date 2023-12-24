@@ -1,59 +1,96 @@
-
-{% extends 'model-page.html'%}
+{% extends 'model-page.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
 
-
 {% block content %}
-
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/matnew.css' %}">
 
 <div class="container mt-5">
-    <h1>Perfil do Usuário</h1>
+    <div class="redenc container text-center mt-1 mb-3">
+        <h2>Perfil do Usuário</h2>
+    </div>
 
     <div class="container">
         <div class="row">
+            <!-- <div class="col-sm mb-4">
+                <img src="{% static 'images/user.png' %}" alt="Imagem" style="width: auto; height: 80px; margin-right: 10px;">
+            </div> -->
             <div class="col-sm mb-4">
-                <img src="{% static 'images/user.png' %}" alt="Imagem"  style="width: auto; height: 80px; margin-right: 10px;">
-        </div>
-            
                 <p><strong>Nome:</strong> {{ nome }}</p>
                 <p><strong>Usuário:</strong> {{ usuario }}</p>
                 <p><strong>Email:</strong> {{ email }}</p>
-
+    
                 {% if polo %}
                     <p><strong>Polo:</strong> {{ polo }}</p>
                 {% else %}
                     <p><strong>Polo:</strong> Não associado a nenhum polo</p>
                 {% endif %}
-
+    
                 {% if cargo %}
-                <p><strong>Perfil:</strong> {% if cargo == 'U' %}Usuário{% elif cargo == 'A' %}Administrador{% else %}{{ cargo }}{% endif %}</p>
+                    <p><strong>Perfil:</strong> {% if cargo == 'U' %}Usuário{% elif cargo == 'A' %}Administrador{% else %}{{ cargo }}{% endif %}</p>
                 {% else %}
-                <p><strong>Perfil:</strong> Não possui cargo atribuído</p>
+                    <p><strong>Perfil:</strong> Não possui cargo atribuído</p>
                 {% endif %}
-
+    
                 {% if ranking %}
-                    <p><strong> Visualizado no Ranking:</strong>{% if ranking == True %} Sim{% elif ranking == False %} Não{% else %} {{ ranking }}{% endif %}</p>
+                    <p><strong>Visualizado no Ranking:</strong>{% if ranking == True %} Sim{% elif ranking == False %} Não{% else %} {{ ranking }}{% endif %}</p>
                 {% else %}
-                    <p><strong>Vizualizado no Ranking:</strong> Não possui ranking atribuído</p>
+                    <p><strong>Visualizado no Ranking:</strong> Não possui ranking atribuído</p>
                 {% endif %}
 
+                <a class=" btn btn-outline-primary btn-sm" href="{%url 'matriculas:alterar_senha'%}">Alterar senha</a>
+            </div>
             
 
+            <div class="col-sm mb-4">
+                <div>
+                    <canvas id="matriculasChart" width="600" height="300"></canvas>
+                </div>
+        </div>
+
+        
+
+        
+        {% for message in messages %}
+            <div class="{% if message.tags %}alert alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+        
     </div>
     
 
-    <a class=" btn btn-outline-primary btn-sm" href="{%url 'matriculas:alterar_senha'%}">altera senha</a>
 
-        {% for message in messages %}
-        <div class="{% if message.tags %}alert alert-{{ message.tags }}{% endif %}">
-            {{ message }}
+    <script>
+        // grafico
+        var matriculasData = {{ matriculas_por_mes|safe }};
+        var meses = Object.keys(matriculasData);
+        var totalMatriculas = Object.values(matriculasData);
+
+        var ctx = document.getElementById('matriculasChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: meses,
+                datasets: [{
+                    label: 'Total de Matrículas por Mês',
+                    data: totalMatriculas,
+                    backgroundColor: 'rgba(75, 192, 192, 1)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 </div>
 
-</div>
-
-
-{% endfor %}
-
-{%endblock%}
+{% endblock %}

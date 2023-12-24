@@ -99,7 +99,7 @@
   </table>
 
 
-  <ul class="pagination">
+  <ul class="pagination mb-5">
   {%if  page_obj.has_previous %}
     <li class="page-item">
       <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
@@ -132,7 +132,7 @@
     </li>
   {% endif %}
   </ul>
-
+</div>
 <!-- Modal do Comprovante -->
 <div class="modal fade" id="imagemModal" tabindex="-1" aria-labelledby="imagemModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -184,5 +184,5 @@
     document.getElementById('formExclusao').submit();
   }
 </script>
-</div>
+
 {% endblock %}

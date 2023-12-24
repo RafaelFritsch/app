@@ -132,6 +132,12 @@ class UserProfileView(LoginRequiredMixin, DetailView):
             context['polo'] = user_profile.polo  # Ajuste conforme necessário
             context['cargo'] = user_profile.cargo
             context['ranking'] = user_profile.ranking
+            
+            # Gráfico de barras
+            matriculas_por_mes = self.get_matriculas_por_mes(user)
+            context['matriculas_por_mes'] = matriculas_por_mes
+           
+            
         except UserProfile.DoesNotExist:
             # Lidere com o caso em que UserProfile não existe para o usuário
             context['polo'] = None
@@ -139,6 +145,20 @@ class UserProfileView(LoginRequiredMixin, DetailView):
             context['ranking'] = None
 
         return context
+    
+    def get_matriculas_por_mes(self, user):
+        # Obtenha as matrículas do usuário
+        matriculas = Matriculas.objects.filter(usuario=user)
+
+        # Conte as matrículas por mês
+        matriculas_por_mes = {}
+        for matricula in matriculas:
+            mes_ano = matricula.data_matricula.strftime("%Y-%m")
+            matriculas_por_mes[mes_ano] = matriculas_por_mes.get(mes_ano, 0) + 1
+
+        return matriculas_por_mes
+
+
 
 class CampanhaListView(LoginRequiredMixin, ListView):
     template_name = 'matriculas/campanha_list.html'
@@ -260,7 +280,6 @@ def get_cursos(request):
     tipo_curso_id = request.GET.get('tipo_curso')
     cursos = cad_cursos.objects.filter(tipo_curso_id=tipo_curso_id).values('id', 'nome')
     cursos_list = list(cursos)
-    print(cursos_list)
     return JsonResponse(cursos_list, safe=False)
 
    
@@ -934,16 +953,16 @@ class RelatorioFinanceiro(LoginRequiredMixin,FormView, ListView):
         return context
  
 
-
-
-
-#TODO: GERAL : INCLUIR SPACEPOINT NO RESUMO MENSAL 
-
+#TODO: Ajustar o UPDATE de Matricula - ajustado falta enviar ###
+#TODO: NEW_MATRICULA :  AJUSTAR OS CAMPOS DE VALOR PARA NAO ACEITAR VALORES NEGATIVOS - ajustado falta enviar ###
+#TODO: LOGIN :  Diminuir o tamanho da fonte no login ( usuario e senha) - ajustado falta enviar ###
+#TODO: RELATORIO SPACEPOINT : INCLUIR SPACEPOINT NO RESUMO MENSAL 
+#TODO: Criar um darkmode para o site
 #TODO: Criar metodo para retirar os pontos
-#TODO: Relatorio Matriculas x Campanha ordenar por nome ou total
-#TODO: Relatorio Resumo Mensal ordenar por nome ou total
-#TODO: Ajustar cores do login não ficaram boas
-#TODO: Ajustar tela de perfil ( talvez incluir mais informaçôes)
+#TODO: Relatorio Matriculas x Campanha ordenar por nome ou total - Ajustado falta enviar ###
+#TODO: Relatorio Resumo Mensal ordenar por nome ou total - ajustado falta enviar ###
+#TODO: PERFIL USUARIO: Ajustar tela de perfil ( talvez incluir mais informaçôes) - Ajustado Enviar ###
+#TODO: PERFIL USUARIO: incluir grafíco de rendimento mensal por ano - ajustado falta enviar ###
 #TODO: Faze os novos relatório solicitados por beto , por ano / por Mes etc com os spacepoints
 class RelatorioSpace(LoginRequiredMixin, ListView):
     template_name = 'matriculas/relatorio_spacepoint.html'
@@ -1090,7 +1109,7 @@ class RelatorioCampanha(LoginRequiredMixin, ListView):
             data_fim_campanha = campanhas.aggregate(Max('data_fim'))['data_fim__max']
         else:
             campanha = cad_campanhas.objects.get(id=filtro_campanha)
-            print(f"Campanha Selecionada: {campanha}")
+            
 
             # Obtém as datas de início e fim da campanha
             data_inicio_campanha = campanha.data_inicio

@@ -15,7 +15,7 @@ class DateInput(forms.DateInput):
 class CursosForm(forms.ModelForm):
     nome = forms.CharField()
     tipo_curso = forms.ModelChoiceField(queryset=tipo_curso.objects.all())
-    active = forms.BooleanField()
+    active = forms.BooleanField(required=False)
     
     class Meta:
         model = cad_cursos
@@ -29,7 +29,7 @@ class CursosForm(forms.ModelForm):
 class TipoCursoForm(forms.ModelForm):
     nome = forms.CharField()
     pontos = forms.IntegerField()
- 
+    active = forms.BooleanField(required=False)
     
     class Meta:
         model = tipo_curso
@@ -44,17 +44,17 @@ class TipoCursoForm(forms.ModelForm):
 
 
 class MatriculasForm(forms.ModelForm):
-    data_matricula = forms.DateTimeField(widget=DateInput())
-    nome_aluno = forms.CharField()
-    numero_ra = forms.CharField(label='RA', required=False)
-    tipo_curso = forms.ModelChoiceField(queryset=tipo_curso.objects.all())
-    curso = forms.ModelChoiceField(queryset=cad_cursos.objects.all())
-    campanha = forms.ModelChoiceField(queryset=cad_campanhas.objects.all()) 
-    valor_mensalidade = forms.DecimalField(label='R$ 1º Mens.')
-    desconto_polo = forms.DecimalField(label='R$ 2º Mens.')
-    desconto_total = forms.DecimalField(label='% Bolsa')
-    processo_sel = forms.ModelChoiceField(queryset=cad_processo.objects.filter(ativo=True), widget=forms.Select(attrs={'class': 'selectpicker'}), label='Processo Seletivo')
-    arquivos = forms.FileField(label='Enviar Comprovante', required=False, widget=forms.ClearableFileInput())
+    data_matricula = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}))
+    nome_aluno = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    numero_ra = forms.CharField(label='RA', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    tipo_curso = forms.ModelChoiceField(queryset=tipo_curso.objects.filter(active=True), widget=forms.Select(attrs={'class': 'form-select'}))
+    curso = forms.ModelChoiceField(queryset=cad_cursos.objects.filter(active=True), widget=forms.Select(attrs={'class': 'form-select'}))
+    campanha = forms.ModelChoiceField(queryset=cad_campanhas.objects.filter(active=True), widget=forms.Select(attrs={'class': 'form-select'})) 
+    valor_mensalidade = forms.DecimalField(label='R$ 1º Mens.', min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    desconto_polo = forms.DecimalField(label='R$ 2º Mens.', min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    desconto_total = forms.DecimalField(label='% Bolsa', min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    processo_sel = forms.ModelChoiceField(queryset=cad_processo.objects.filter(ativo=True), widget=forms.Select(attrs={'class': 'form-select'}), label='Processo Seletivo')
+    arquivos = forms.FileField(label='Enviar Comprovante', required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
     
     def label_from_instance(self, obj):
         return f"{obj.numero_processo} / {obj.ano_processo}"
@@ -75,11 +75,13 @@ class MatriculasForm(forms.ModelForm):
             'arquivos',
         )
         
+
+        
     def __init__(self, *args, **kwargs):
         super(MatriculasForm, self).__init__(*args, **kwargs)
         self.fields['processo_sel'].label_from_instance = self.label_from_instance
         self.fields['curso'].queryset = cad_cursos.objects.none()  
-        self.fields['processo_sel'].widget.attrs['class'] = 'selectpicker'
+        self.fields['processo_sel'].widget.attrs['class'] = 'form-select'
         self.fields['curso'].widget.attrs['data-live-search'] = True # Adicionar atributo data-live-search para habilitar a pesquisa em campos de seleção
         
         if 'tipo_curso' in self.data: # Filtrar opções do campo curso dinamicamente com base no tipo de curso
@@ -94,6 +96,9 @@ class MatriculasForm(forms.ModelForm):
             if instance:
                 self.fields['tipo_curso'].queryset = tipo_curso.objects.filter(id=instance.tipo_curso.id)
                 self.fields['curso'].queryset = cad_cursos.objects.filter(tipo_curso_id=instance.tipo_curso.id)
+                 # Ajuste o formato da data antes de atribuir ao campo `initial`
+                self.fields['data_matricula'].initial = instance.data_matricula.strftime('%Y-%m-%d') if instance.data_matricula else None
+
 
 
 ESTADOS_UF = (

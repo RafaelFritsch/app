@@ -4,6 +4,10 @@
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 
 
@@ -62,8 +66,14 @@
     </tbody>
 </table>
 {% endif %}
-<script> 
+<script>
     document.addEventListener('DOMContentLoaded', function () {
+        $('table').DataTable({
+        order: [[$('th[id^="total-"]').length, 'desc']], // Ordena pela última coluna (total) em ordem decrescente
+        paging: false,  // Desativa a paginação
+        searching: false,  // Desativa a pesquisa
+        info: false
+    });
         // Mapeamento dos nomes dos meses em inglês para português
         var mesesTraducao = {
             'Janeiro': 'JAN',
@@ -83,13 +93,19 @@
         // Selecione todas as células de cabeçalho que começam com "Total"
         var thTotalMeses = document.querySelectorAll('th[id^="total-"]');
 
-        // Itere sobre as células de cabeçalho e substitua o texto
+        // Itere sobre as células de cabeçalho
         thTotalMeses.forEach(function (th) {
             // Use o texto da célula como chave para obter a tradução
             var nomeMesIngles = th.textContent.trim().replace('Total ', '');
-            th.textContent = '' + mesesTraducao[nomeMesIngles];
+
+            // Se o texto for "Total", não altere a célula
+            if (nomeMesIngles !== 'Total') {
+                th.textContent = mesesTraducao[nomeMesIngles];
+            }
         });
     });
+
+
 </script>
 
 </div>
