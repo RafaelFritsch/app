@@ -1,0 +1,48 @@
+{% extends 'model-page.html'%}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/matnew.css' %}">
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/locales/bootstrap-datepicker.pt-BR.min.js"></script>
+
+<div class="centered-form">
+    <h2> Cadastro de Checkpoint</h2>
+
+
+        {% if form.errors%}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class-="alert alert-danger">
+                        <strong>{{error|escape}}</strong>
+                    </div>  
+                {% endfor %}
+        
+
+            {%endfor%}
+        {% endif %}
+        <div>               
+            <form method="POST">{% csrf_token %}
+                {{ form|crispy}}
+                <button type="submit" class="btn btn-primary">SALVAR</button>
+            </form>
+        </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('#id_data_spacepoint').datepicker({
+            format: 'dd/mm/yyyy',  // Formato da data
+            autoclose: true,
+            language: 'pt-BR'
+        });
+    });
+</script>
+
+{%endblock%}

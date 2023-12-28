@@ -8,6 +8,7 @@ from datetime import timedelta, date
 
 
 
+
 # Create your models here.
 def get_month_range(start_date, end_date):
     current_date = start_date
@@ -205,7 +206,49 @@ class cad_processo(models.Model):
         return reverse("matriculas:processo_delete", kwargs={'id': self.id})# Exclui o resgistro
     def get_month_range(self):
         return get_month_range(self.data_inicial_processo, self.data_final_processo)
+ 
+ 
+class cad_spacepoint(models.Model):
+    id = models.AutoField(primary_key=True)
+    id_processos = models.ForeignKey(cad_processo, on_delete=models.PROTECT)
+    data_spacepoint = models.DateTimeField()
+    meta_pc = models.IntegerField()
+    ativo = models.BooleanField(default=True)
     
+    class Meta: 
+        db_table = 'spacepoint'
+        
+    def __str__(self):
+        return self.id
+    def get_processo_label(self):
+        return f"{self.id_processos.numero_processo} / {self.id_processos.ano_processo}"
+    def get_absolute_url(self):
+        return reverse("matriculas:spacepoint_update", kwargs={'id': self.id}) #Direciona para a url de edição
+       
+
+class Metas(models.Model):
+    id = models.AutoField(primary_key=True)
+    processo = models.ForeignKey(cad_processo, on_delete=models.PROTECT)
+    polo = models.ForeignKey(cad_polos, on_delete=models.PROTECT)
+    tipo_curso = models.ForeignKey(tipo_curso, on_delete=models.PROTECT)
+    meta = models.IntegerField()
+    
+    class Meta:
+        db_table = 'metas'
+    
+    def __str__(self):
+        return self.id
+    def get_processo_label(self):
+        return f"{self.processo.numero_processo} / {self.processo.ano_processo}"
+    def get_polo_label(self):
+        return self.polo
+    def get_tipo_curso_label(self):
+        return self.tipo_curso
+    def get_absolute_url(self):
+        return reverse("matriculas:metas_update", kwargs={'id': self.id}) #Direciona para a url de edição
+
+
+
     
 class Matriculas(models.Model):
     id = models.AutoField(primary_key=True)
@@ -252,3 +295,5 @@ class Matriculas(models.Model):
             self.arquivos.delete()
 
         super().delete(*args, **kwargs)
+    def get_quantidade_por_tipo_curso(self, tipo_curso_id):
+        return self.usuario.userprofile.polo.matriculas_set.filter(tipo_curso__id=tipo_curso_id).count()

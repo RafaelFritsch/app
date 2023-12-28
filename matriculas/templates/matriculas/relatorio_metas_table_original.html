@@ -1,0 +1,87 @@
+{% extends 'model-page.html'%}
+{% load static %}
+
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+
+
+<div class="redenc mb-3 d-flex align-items-center justify-content-between ">
+  <div>
+    <img src="{% static 'images/virtua_full.svg' %}" alt="Imagem" style="width: auto; height: 50px; margin-right: 10px;">
+  </div>
+  <div>
+    <h1 class="mb-0">MATRICULAS X METAS</h1>
+  </div>
+  <div >
+    <form method="get" action="" id="dateNow">
+        <div class="form-group">
+            <label for="{{ date_select_form.selected_date.id_for_label }}"></label>
+            {{date_select_form.selected_date }}
+        </div>
+        <div class="form-group pt-3">
+            <input type="submit" class="btn btn-primary" value="Enviar">
+        </div>
+    </form>
+  </div> 
+</div>
+
+
+
+
+
+<div class=" container">
+  <div class="row">
+    <div class="col pt-5 pb-5">
+      <div>
+        <h3>Matrículas da REDE:  <b class="text-danger">{{ total_matriculas_dia }}</b></h3>
+      </div>
+      
+      
+     
+      <table class="table table-striped table-hover table-sm">
+        <thead>
+          <tr>
+            <th>Polo</th>
+            {% for tipo_curso_obj in tipos_de_curso %}
+            <td>{{ tipo_curso_obj.nome }}</td>  {# Aqui você está acessando o nome do tipo_curso #}
+            {% endfor %}
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for polo_id, polo_data in matriculas_por_polo.items %}
+            <tr>
+              <td>{{ polo_data.polo.nome }}</td>
+              {% for _, somatorio_tipo_curso in polo_data.somatorio_tipo_curso.items %}
+                <td>{{ somatorio_tipo_curso }}</td>
+              {% endfor %}
+              <td>{{ polo_data.total }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+
+      
+      
+
+      
+    </div>
+
+
+  
+  
+
+
+
+
+
+
+{% endblock %}

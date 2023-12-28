@@ -71,7 +71,7 @@
   </div>
 </form>
 
-<table class="table table-striped mt-4">
+<table class="table table-striped mt-4 mb-4">
     <thead>
         <tr>
           <th class="text-start text-sm bg-secondary align-middle align-items-center">DATA</th>
@@ -129,7 +129,7 @@
   </table>
 
 
-  <ul class="pagination">
+  <ul class="pagination mb-4">
   {%if  page_obj.has_previous %}
     <li class="page-item">
       <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
@@ -163,6 +163,9 @@
   {% endif %}
   </ul>
 </div>
+
+
+
 <!-- Modal do Comprovante -->
 <div class="modal fade" id="imagemModal" tabindex="-1" aria-labelledby="imagemModalLabel" aria-hidden="true">
   <div class="modal-dialog">

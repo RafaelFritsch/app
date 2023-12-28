@@ -217,7 +217,7 @@ class PoloListView(LoginRequiredMixin, ListView):
 class TipoCursoListView(LoginRequiredMixin, ListView):
     template_name = 'matriculas/tipo_curso_list.html'
     model = tipo_curso
-    queryset = tipo_curso.objects.all()
+    queryset = tipo_curso.objects.all().order_by('nome')
     paginate_by = 8
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -228,11 +228,13 @@ class TipoCursoListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(nome__icontains=search_query)
 
         return queryset
-    
+
+#TODO: Criar view para ver as metas inativas
+#TODO: Criar view para ver os checkpoints inativos   
 class ProcessoListView(LoginRequiredMixin, ListView):
     template_name = 'matriculas/processo_list.html'
     model = cad_processo
-    queryset = cad_processo.objects.all()
+    queryset = cad_processo.objects.all().order_by('-data_final_processo')
     paginate_by = 8
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -241,6 +243,38 @@ class ProcessoListView(LoginRequiredMixin, ListView):
         if search_query:
             # Filtra processo com base no número ou ano
             queryset = queryset.filter(numero_processo__icontains=search_query) | queryset.filter(ano_processo__icontains=search_query)
+
+        return queryset
+    
+class SpacePointListView(LoginRequiredMixin, ListView):
+    template_name = 'matriculas/spacepoint_list.html'
+    model = cad_spacepoint
+    queryset = cad_spacepoint.objects.all().order_by('-data_spacepoint')
+    paginate_by = 8
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_query = self.request.GET.get('name', '')
+        queryset = queryset.filter(id_processos__ativo=True)
+
+        if search_query:
+            # Filtra space point com base no nome
+            queryset = queryset.filter(nome__icontains=search_query)
+
+        return queryset
+
+class MetasListView(LoginRequiredMixin, ListView):
+    template_name = 'matriculas/metas_list.html'
+    model = Metas
+    queryset = Metas.objects.all()
+    paginate_by = 8
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_query = self.request.GET.get('name', '')
+        queryset = queryset.filter(processo__ativo=True)
+        if search_query:
+            # Filtra metas com base no nome
+            queryset = queryset.filter(processo__numero_processo__icontains=search_query)
 
         return queryset
 
@@ -460,7 +494,64 @@ def lista_processos(request):
     processos_ativos = cad_processo.objects.filter(ativo=True)
     # Passa a lista filtrada para o template
     return render (request, 'matriculas/processo_ativo.html', {'processos': processos_ativos})     
+
+
+
+class SpacepointNewView(LoginRequiredMixin, CreateView):
+    template_name = 'matriculas/spacepoint_new.html'
+    form_class = SpacePointForm
     
+    def form_valid(self, form):
+        return super().form_valid(form)
+    
+    def get_success_url(self) -> str:
+        return reverse('matriculas:spacepoint_list')
+    def get_initial(self):
+        # Obtém o processo ativo (assumindo que você tem um campo 'ativo' em cad_processo)
+        processo_ativo = cad_processo.objects.filter(ativo=True).first()
+
+        # Inicializa o dicionário com os valores iniciais
+        initial = {
+            'id_processos': processo_ativo,
+            'ativo': True,
+        }
+
+        return initial
+    
+    
+class SpacepointActivateView(View):
+    def get(self, request, id):
+        processo = get_object_or_404(cad_processo, id=id)
+        processo.ativo = True
+        processo.save()
+        return RedirectView.as_view(url=reverse_lazy('matriculas:spacepoint_list'))(request)
+class SpacePointDeactivateView(View):
+    def get(self, request, id):
+        processo = get_object_or_404(cad_processo, id=id)
+        processo.ativo = False
+        processo.save()
+        return RedirectView.as_view(url=reverse_lazy('matriculas:spacepoint_list'))(request)
+
+
+
+class MetasNewView(LoginRequiredMixin, CreateView):
+    template_name = 'matriculas/metas_new.html'
+    form_class = MetasForm
+    
+    
+    def get_success_url(self) -> str:
+        return reverse('matriculas:metas_table')
+    def get_initial(self):
+        # Obtém o processo ativo (assumindo que você tem um campo 'ativo' em cad_processo)
+        processo_ativo = cad_processo.objects.filter(ativo=True).first()
+
+        # Inicializa o dicionário com os valores iniciais
+        initial = {
+            'processo': processo_ativo,
+        }
+
+        return initial
+
 ####################### UPDATE VIEWS ######################################################
     
 class MatriculasUpdateView(LoginRequiredMixin, UpdateView):
@@ -589,7 +680,41 @@ class ProcessoUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse('matriculas:processo_list')
     
+    
+class SpacepointUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'matriculas/spacepoint_new.html'
+    form_class = SpacePointForm
+    
+    def get_object(self):
+        id = self.kwargs.get('id')
+        return get_object_or_404(cad_spacepoint, id=id)  # Retorna o objeto consultor a partir do id
+    
+    def form_valid(self, form):
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse('matriculas:spacepoint_list')
+    
 
+class MetasUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'matriculas/metas_new.html'
+    form_class = MetasForm
+    
+    def get_object(self):
+        id = self.kwargs.get('id')
+        return get_object_or_404(Metas, id=id)  # Retorna o objeto consultor a partir do id
+    
+    def form_valid(self, form):
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse('matriculas:metas_list')  
+    
+    
+
+#TODO: PROCESSOS - Parada no formuárlio de NOVO PROCESSO - melhorar o layout
+
+#TODO: PROCESSOS - ina tela de cadastro de checkpoint mostrar os checkpoints cadastrados
 # DELETE VIEWS ######################################################
 
 class MatriculasDeleteView(LoginRequiredMixin, DeleteView): 
@@ -952,18 +1077,11 @@ class RelatorioFinanceiro(LoginRequiredMixin,FormView, ListView):
 
         return context
  
-
-#TODO: Ajustar o UPDATE de Matricula - ajustado falta enviar ###
-#TODO: NEW_MATRICULA :  AJUSTAR OS CAMPOS DE VALOR PARA NAO ACEITAR VALORES NEGATIVOS - ajustado falta enviar ###
-#TODO: LOGIN :  Diminuir o tamanho da fonte no login ( usuario e senha) - ajustado falta enviar ###
+#TODO: Fazer margin botton no relatório matriculas x consultor para descolar do final da página
 #TODO: RELATORIO SPACEPOINT : INCLUIR SPACEPOINT NO RESUMO MENSAL 
 #TODO: Criar um darkmode para o site
 #TODO: Criar metodo para retirar os pontos
-#TODO: Relatorio Matriculas x Campanha ordenar por nome ou total - Ajustado falta enviar ###
-#TODO: Relatorio Resumo Mensal ordenar por nome ou total - ajustado falta enviar ###
-#TODO: PERFIL USUARIO: Ajustar tela de perfil ( talvez incluir mais informaçôes) - Ajustado Enviar ###
-#TODO: PERFIL USUARIO: incluir grafíco de rendimento mensal por ano - ajustado falta enviar ###
-#TODO: Faze os novos relatório solicitados por beto , por ano / por Mes etc com os spacepoints
+
 class RelatorioSpace(LoginRequiredMixin, ListView):
     template_name = 'matriculas/relatorio_spacepoint.html'
     model = Matriculas
@@ -1194,3 +1312,190 @@ class RelatorioCampanha(LoginRequiredMixin, ListView):
             queryset = queryset.filter(campanha__id=campanha.id, data_matricula__range=(data_inicio, data_fim))
 
         return queryset
+    
+class MetasTableView(LoginRequiredMixin, View):
+    template_name = 'matriculas/metas_table.html'
+
+    def get(self, request, *args, **kwargs):
+        # Recupera os dados necessários do banco de dados
+        metas_data, tipos_curso = self.get_metas_data()
+
+        # Passa os dados para o contexto do template
+        context = {'metas_data': metas_data, 'tipos_curso': tipos_curso}
+       
+        return render(request, self.template_name, context)
+
+    def get_metas_data(self):
+        metas_data = []
+        polos = cad_polos.objects.filter(active=True).order_by('nome')
+        tipos_curso = tipo_curso.objects.filter(active=True).order_by('nome')
+
+        for polo in polos:
+            # Filtra os processos ativos relacionados ao polo
+            processos_ativos = cad_processo.objects.filter(ativo=True)
+
+            # Inicializa o dicionário para armazenar os valores das metas para cada tipo_curso
+            meta_por_tipo_curso = {tipo.nome: 0 for tipo in tipos_curso}
+
+            for processo in processos_ativos:
+                # Filtra as metas relacionadas ao processo
+                metas_polo = Metas.objects.filter(polo=polo, processo=processo)
+
+                # Preenche o dicionário com os valores das metas reais
+                for meta in metas_polo:
+                    meta_por_tipo_curso[meta.tipo_curso.nome] += meta.meta
+
+            # Calcula o total de todas as metas
+            total_metas = sum(meta_por_tipo_curso.values())
+
+            # Adiciona os dados à lista
+            metas_data.append({
+                'polo': polo.nome,
+                'meta_por_tipo_curso': meta_por_tipo_curso,
+                'total_metas': total_metas,
+            })
+
+        return metas_data, tipos_curso
+    
+
+# class RelatorioMetasTableView(LoginRequiredMixin, ListView):
+#     template_name = 'matriculas/relatorio_metas_table.html'
+#     model = Matriculas
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+        
+#         # Filtre os processos seletivos ativos
+#         processos_seletivos_ativos = cad_processo.objects.filter(ativo=True)
+
+#         # Adiciona o campo meta_por_tipo_curso da primeira view
+#         metas_data, tipos_curso = MetasTableView().get_metas_data()
+#         context['meta_por_tipo_curso'] = {tipo.nome: 0 for tipo in tipos_curso}
+#         for meta_data in metas_data:
+#             for tipo, valor in meta_data['meta_por_tipo_curso'].items():
+#                 context['meta_por_tipo_curso'][tipo] += valor
+        
+#         # Total de Matrículas do Dia para processos seletivos ativos
+#         total_matriculas_dia = Matriculas.objects.filter(processo_sel__in=processos_seletivos_ativos).count()
+#         context['total_matriculas_dia'] = total_matriculas_dia
+
+#         # Lista de Polos Cadastrados
+#         context['polos'] = cad_polos.objects.all().order_by('nome')
+#         context['tipo_curso'] = tipo_curso.objects.all()
+#         # Quantidade total de matrículas por polo para processos seletivos ativos
+#         matriculas_por_polo = {}
+#         for polo in context['polos']:
+#             matriculas_por_polo[polo.id] = {
+#                 'polo': polo,
+#                 'total': Matriculas.objects.filter(
+#                     usuario__userprofile__polo=polo,
+#                     processo_sel__in=processos_seletivos_ativos,
+#                 ).aggregate(total=Count('id'))['total'],
+#                 'somatorio_tipo_curso': {}
+#             }
+
+#             # Somatório de matrículas por tipo de curso para cada polo para processos seletivos ativos
+#             tipos_de_curso = tipo_curso.objects.all()
+#             for tipo in tipos_de_curso:
+#                 matriculas_por_polo[polo.id]['somatorio_tipo_curso'][tipo.id] = Matriculas.objects.filter(
+#                     usuario__userprofile__polo=polo,
+#                     tipo_curso=tipo,
+#                     processo_sel__in=processos_seletivos_ativos,
+#                 ).aggregate(total=Count('id'))['total']
+
+#         context['matriculas_por_polo'] = matriculas_por_polo
+
+#         # Total de Matrículas por Usuário com informação do Polo
+#         matriculas_por_usuario_com_polo = (
+#             Matriculas.objects
+#             .values('usuario__userprofile__polo__nome')
+#             .annotate(total=Count('id'))
+#         )
+#         context['matriculas_por_usuario_com_polo'] = matriculas_por_usuario_com_polo
+#         context['tipos_de_curso'] = tipo_curso.objects.all().order_by('nome')
+#         return context
+
+class RelatorioMetasTableView(LoginRequiredMixin, ListView):
+    template_name = 'matriculas/relatorio_metas_table.html'
+    model = Matriculas
+
+    def get(self, request, *args, **kwargs):
+        # Dados da primeira view
+        metas_data, tipos_curso = self.get_metas_data()
+        total_matriculas_dia = Matriculas.objects.filter(
+            processo_sel__in=self.get_processos_ativos()).count()
+        
+        # Dados da segunda view
+        matriculas_por_polo = self.get_matriculas_por_polo()
+        matriculas_por_usuario_com_polo = self.get_matriculas_por_usuario_com_polo()
+
+        context = {
+            'metas_data': metas_data,
+            'tipos_curso': tipos_curso,
+            'total_matriculas_dia': total_matriculas_dia,
+            'matriculas_por_polo': matriculas_por_polo,
+            'matriculas_por_usuario_com_polo': matriculas_por_usuario_com_polo,
+        }
+
+        return render(request, self.template_name, context)
+
+    def get_metas_data(self):
+        metas_data = []
+        polos = cad_polos.objects.filter(active=True).order_by('nome')
+        tipos_curso = tipo_curso.objects.filter(active=True).order_by('nome')
+
+        for polo in polos:
+            processos_ativos = cad_processo.objects.filter(ativo=True)
+            meta_por_tipo_curso = {tipo.nome: 0 for tipo in tipos_curso}
+
+            for processo in processos_ativos:
+                metas_polo = Metas.objects.filter(polo=polo, processo=processo)
+
+                for meta in metas_polo:
+                    meta_por_tipo_curso[meta.tipo_curso.nome] += meta.meta
+
+            total_metas = sum(meta_por_tipo_curso.values())
+
+            metas_data.append({
+                'polo': polo.nome,
+                'meta_por_tipo_curso': meta_por_tipo_curso,
+                'total_metas': total_metas,
+            })
+
+        return metas_data, tipos_curso
+
+    def get_processos_ativos(self):
+        return cad_processo.objects.filter(ativo=True)
+
+    def get_matriculas_por_polo(self):
+        processos_seletivos_ativos = cad_processo.objects.filter(ativo=True)
+        matriculas_por_polo = {}
+
+        for polo in cad_polos.objects.all().order_by('nome'):
+            matriculas_por_polo[polo.id] = {
+                'polo': polo,
+                'total': Matriculas.objects.filter(
+                    usuario__userprofile__polo=polo,
+                    processo_sel__in=processos_seletivos_ativos,
+                ).aggregate(total=Count('id'))['total'],
+                'somatorio_tipo_curso': {}
+            }
+
+            tipos_de_curso = tipo_curso.objects.all().order_by('nome')
+
+            for tipo in tipos_de_curso:
+                matriculas_por_polo[polo.id]['somatorio_tipo_curso'][tipo.id] = Matriculas.objects.filter(
+                    usuario__userprofile__polo=polo,
+                    tipo_curso=tipo,
+                    processo_sel__in=processos_seletivos_ativos,
+                ).aggregate(total=Count('id'))['total']
+
+        return matriculas_por_polo
+
+    def get_matriculas_por_usuario_com_polo(self):
+        matriculas_por_usuario_com_polo = (
+            Matriculas.objects
+            .values('usuario__userprofile__polo__nome')
+            .annotate(total=Count('id'))
+        )
+        return matriculas_por_usuario_com_polo

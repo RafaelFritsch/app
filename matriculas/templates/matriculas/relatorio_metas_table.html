@@ -1,0 +1,440 @@
+{% extends 'model-page.html'%}
+{% load static %}
+
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+
+
+  <div class="redenc mb-3 d-flex align-items-center justify-content-between ">
+    <div>
+      <img src="{% static 'images/virtua_full.svg' %}" alt="Imagem" style="width: auto; height: 50px; margin-right: 10px;">
+    </div>
+      <h1 class="mb-0">MATRICULAS X METAS</h1>
+      <img src="{% static 'images/branco.svg' %}" alt="" style="width: auto; height: 50px; margin-right: 10px;">
+      
+  </div>
+
+
+  
+
+  <div class="text-center scalable-content" style="scale: 0.90;">
+    <div class="row align-items-end ">
+      <div class="col">
+        <!-- Dados da terceira view -->     
+      <table class="table table-striped table-sm table-hover">
+        <thead>
+          <tr>
+            <th class="text-start">Polo</th>
+            {% for tipo, valor in metas_data.0.meta_por_tipo_curso.items %}
+              {% if forloop.first %}
+
+              {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for meta_data in metas_data %}
+            <tr>
+              <td class="text-start text-truncate">{{ meta_data.polo }}</td>
+              
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      <div class="col">
+          
+        <table class="table table-striped table-sm table-hover">
+          <thead>
+            <tr>
+            
+              {% for tipo, valor in metas_data.0.meta_por_tipo_curso.items %}
+                {% if forloop.first %}
+                  <th class="fs-10">{{ tipo }}</th>
+                  <th class="fs-10">Realizado</th>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for meta_data in metas_data %}
+              <tr>
+              
+                {% for tipo, valor in meta_data.meta_por_tipo_curso.items %}
+                  {% if forloop.first %}
+                    <td>{{ valor }}</td>
+                    
+                    {% for polo_id, polo_data in matriculas_por_polo.items %}
+                      {% if polo_data.polo.nome == meta_data.polo %}
+                        {% for tipo_id, tipo_total in polo_data.somatorio_tipo_curso.items %}
+                          {% if forloop.first %}
+                            <td>{{ tipo_total }}</td>
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                    
+                  {% endif %}
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+    <div class="col">
+      <table class="table table-striped table-sm table-hover">
+        <thead>
+          <tr>
+            
+            {% for tipo, valor in metas_data.0.meta_por_tipo_curso.items %}
+            {% if forloop.counter == 2 %}
+                <th class="fs-10">{{ tipo }}</th>
+                <th class="fs-10">Realizado</th>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for meta_data in metas_data %}
+            <tr>
+              
+              {% for tipo, valor in meta_data.meta_por_tipo_curso.items %}
+              {% if forloop.counter == 2 %}
+                  <td>{{ valor }}</td>
+                  
+                  {% for polo_id, polo_data in matriculas_por_polo.items %}
+                    {% if polo_data.polo.nome == meta_data.polo %}
+                      {% for tipo_id, tipo_total in polo_data.somatorio_tipo_curso.items %}
+                        {% if forloop.counter == 2 %}
+                          <td>{{ tipo_total }}</td>
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                  
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <table class="table table-striped table-sm table-hover">
+        <thead>
+          <tr>
+            
+            {% for tipo, valor in metas_data.0.meta_por_tipo_curso.items %}
+            {% if forloop.counter == 3 %}
+                <th class="fs-10">{{ tipo }}</th>
+                <th class="fs-10">Realizado</th>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for meta_data in metas_data %}
+            <tr>
+              
+              {% for tipo, valor in meta_data.meta_por_tipo_curso.items %}
+              {% if forloop.counter == 3 %}
+                  <td>{{ valor }}</td>
+                  
+                  {% for polo_id, polo_data in matriculas_por_polo.items %}
+                    {% if polo_data.polo.nome == meta_data.polo %}
+                      {% for tipo_id, tipo_total in polo_data.somatorio_tipo_curso.items %}
+                        {% if forloop.counter == 3 %}
+                          <td>{{ tipo_total }}</td>
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                  
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <table class="table table-striped table-sm table-hover">
+        <thead>
+          <tr>
+            
+            {% for tipo, valor in metas_data.0.meta_por_tipo_curso.items %}
+            {% if forloop.counter == 4 %}
+                <th class="fs-10">{{ tipo }}</th>
+                <th class="fs-10">Realizado</th>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for meta_data in metas_data %}
+            <tr>
+              
+              {% for tipo, valor in meta_data.meta_por_tipo_curso.items %}
+              {% if forloop.counter == 4 %}
+                  <td>{{ valor }}</td>
+                  
+                  {% for polo_id, polo_data in matriculas_por_polo.items %}
+                    {% if polo_data.polo.nome == meta_data.polo %}
+                      {% for tipo_id, tipo_total in polo_data.somatorio_tipo_curso.items %}
+                        {% if forloop.counter == 4 %}
+                          <td>{{ tipo_total }}</td>
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                  
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <table class="table table-striped table-sm table-hover">
+          <thead>
+            <tr>
+              
+              {% for tipo, valor in metas_data.0.meta_por_tipo_curso.items %}
+              {% if forloop.counter == 5 %}
+                  <th class="fs-10">{{ tipo }}</th>
+                  <th class="fs-10">Realizado</th>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for meta_data in metas_data %}
+              <tr>
+                
+                {% for tipo, valor in meta_data.meta_por_tipo_curso.items %}
+                {% if forloop.counter == 5 %}
+                    <td>{{ valor }}</td>
+                    
+                    {% for polo_id, polo_data in matriculas_por_polo.items %}
+                      {% if polo_data.polo.nome == meta_data.polo %}
+                        {% for tipo_id, tipo_total in polo_data.somatorio_tipo_curso.items %}
+                          {% if forloop.counter == 5 %}
+                            <td>{{ tipo_total }}</td>
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                    
+                  {% endif %}
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="col-sm-1">
+            <table class="table table-striped table-sm table-hover">
+            <thead>
+            <tr>
+              <th class="fs-10">Total Realizado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for polo_id, polo_data in matriculas_por_polo.items %}
+              <tr>
+                <td>{{ polo_data.total }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="col-sm-1">
+        <table class="table table-striped table-sm table-hover ">
+          <thead >
+            <tr>
+              <th class="fs-10">Total de Metas</th>       
+            </tr>
+          </thead>
+          <tbody>
+            {% for meta_data in metas_data %}
+              <tr>
+                <td>{{ meta_data.total_metas }}</td>
+              </tr>
+            {% endfor %} 
+          </tbody>
+        </table>
+      </div>
+  </div>
+</div>
+
+<div class="container mb-5 ">
+<div class="row">
+  <canvas id="chart"></canvas>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+// Função para adicionar uma linha na primeira tabela (sem somatório)
+function adicionarLinhaNaPrimeiraTabela() {
+  var primeiraTabela = document.querySelector('.table'); // Seleciona a primeira tabela pela classe
+
+  // Adicionar uma nova linha ao final da primeira tabela
+  var novaLinha = primeiraTabela.insertRow(-1);
+
+  // Adicionar células à nova linha (pode personalizar conforme necessário)
+  var celula1 = novaLinha.insertCell(0);
+  celula1.textContent = 'TOTAIS';
+
+  // Adicionar uma classe à última linha para estilização posterior
+  novaLinha.classList.add('linha-totais');
+}
+
+// Função para calcular o somatório das colunas nas tabelas, exceto a primeira
+function calcularSomatorio() {
+  var tabelas = document.querySelectorAll('.table'); // Seleciona todas as tabelas pela classe
+
+  // Itera sobre cada tabela, exceto a primeira
+  for (var i = 1; i < tabelas.length; i++) {
+    var tabela = tabelas[i];
+
+    // Verifica se já existe uma última linha na tabela
+    if (tabela.rows.length > 0 && tabela.rows[tabela.rows.length - 1].cells[0].textContent === 'TOTAIS') {
+      continue; // Se já existir, pule para a próxima tabela
+    }
+
+    var totalTipo = 0;
+    var totalRealizado = 0;
+
+    // Itera sobre as linhas da tabela (começando da segunda linha)
+    for (var j = 1; j < tabela.rows.length; j++) {
+      // Obter o valor da célula de tipo (se existir)
+      var celulaTipo = tabela.rows[j].cells[0];
+      var valorTipo = celulaTipo ? celulaTipo.textContent.trim() : '';
+
+      // Obter o valor da célula de realizado (se existir)
+      var celulaRealizado = tabela.rows[j].cells[1];
+      var valorRealizado = celulaRealizado ? celulaRealizado.textContent.trim() : '';
+
+      // Verifica se os valores não estão vazios antes de somar
+      if (valorTipo !== '') {
+        totalTipo += parseFloat(valorTipo) || 0;
+      }
+
+      if (valorRealizado !== '') {
+        totalRealizado += parseFloat(valorRealizado) || 0;
+      }
+    }
+
+    // Adicionar uma nova linha ao final da tabela
+    var novaLinha = tabela.insertRow(-1);
+
+    // Adicionar células à nova linha com os totais calculados
+    var celulaTipo = novaLinha.insertCell(0);
+    celulaTipo.textContent = totalTipo || ''; // Exibe vazio se não houver valor
+
+    var celulaRealizado = novaLinha.insertCell(1);
+    celulaRealizado.textContent = totalRealizado || ''; // Exibe vazio se não houver valor
+
+    // Adicionar uma classe à última linha para estilização posterior
+    novaLinha.classList.add('linha-totais');
+  }
+}
+
+// Chame as funções ao carregar a página
+adicionarLinhaNaPrimeiraTabela();
+calcularSomatorio();
+});
+</script>
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      // ... Your existing code ...
+  
+      // Function to create a bar chart
+      function createBarChart(labels, dataTotalMetas, dataTotalPolos) {
+          var ctx = document.getElementById('chart').getContext('2d');
+          var myChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                  labels: labels,
+                  datasets: [
+                      {
+                          label: 'Meta',
+                          data: dataTotalMetas,
+                          backgroundColor: 'rgba(75, 192, 192, 0.2)', // Customize the color
+                          borderColor: 'rgba(75, 192, 192, 1)', // Customize the border color
+                          borderWidth: 1
+                      },
+                      {
+                          label: 'Realizado',
+                          data: dataTotalPolos,
+                          backgroundColor: 'rgba(255, 99, 132, 0.2)', // Customize the color
+                          borderColor: 'rgba(255, 99, 132, 1)', // Customize the border color
+                          borderWidth: 1
+                      }
+                  ]
+              },
+              options: {
+                  scales: {
+                      y: {
+                          beginAtZero: true
+                      }
+                  }
+              }
+          });
+      }
+  
+          // Function to extract data for the bar chart
+          function extractChartData() {
+              var labels = [];
+              var dataTotalMetas = [];
+              var dataTotalPolos = [];
+      
+              // Iterate through metas_data to extract labels and data
+              {% for meta_data in metas_data %}
+                  labels.push('{{ meta_data.polo }}');
+                  dataTotalMetas.push({{ meta_data.total_metas }});
+              {% endfor %}
+      
+              // Iterate through matriculas_por_polo to extract data for total polos
+              {% for polo_id, polo_data in matriculas_por_polo.items %}
+                  dataTotalPolos.push({{ polo_data.total }});
+              {% endfor %}
+      
+              return { labels: labels, dataTotalMetas: dataTotalMetas, dataTotalPolos: dataTotalPolos };
+          }
+      
+          // Call the functions to create and display the bar chart
+          var chartData = extractChartData();
+          createBarChart(chartData.labels, chartData.dataTotalMetas, chartData.dataTotalPolos);
+      });
+  </script>
+  
+  
+
+
+
+
+<style>
+  .fs-10{
+    font-size: 12px;
+  }
+
+  .linha-totais {
+    font-weight: bold;
+  }
+</style>
+
+
+
+{% endblock %}

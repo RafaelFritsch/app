@@ -128,6 +128,54 @@
         "documentation": {}
     },
     {
+        "label": "migrations",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "models",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "migrations",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "models",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "migrations",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "models",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
         "label": "models",
         "importPath": "django.db",
         "description": "django.db",
@@ -491,11 +539,51 @@
         "documentation": {}
     },
     {
+        "label": "Mapping",
+        "importPath": "collections.abc",
+        "description": "collections.abc",
+        "isExtraImport": true,
+        "detail": "collections.abc",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "forms",
         "importPath": "django",
         "description": "django",
         "isExtraImport": true,
         "detail": "django",
+        "documentation": {}
+    },
+    {
+        "label": "File",
+        "importPath": "django.core.files.base",
+        "description": "django.core.files.base",
+        "isExtraImport": true,
+        "detail": "django.core.files.base",
+        "documentation": {}
+    },
+    {
+        "label": "Model",
+        "importPath": "django.db.models.base",
+        "description": "django.db.models.base",
+        "isExtraImport": true,
+        "detail": "django.db.models.base",
+        "documentation": {}
+    },
+    {
+        "label": "ErrorList",
+        "importPath": "django.forms.utils",
+        "description": "django.forms.utils",
+        "isExtraImport": true,
+        "detail": "django.forms.utils",
         "documentation": {}
     },
     {
@@ -1176,6 +1264,33 @@
         "documentation": {}
     },
     {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "matriculas.migrations.0005_cad_spacepoint",
+        "description": "matriculas.migrations.0005_cad_spacepoint",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('matriculas', '0004_alter_cad_cursos_tipo_curso_and_more'),\n    ]\n    operations = [\n        migrations.CreateModel(\n            name='cad_spacepoint',\n            fields=[\n                ('id', models.AutoField(primary_key=True, serialize=False)),\n                ('data_spacepoint', models.DateTimeField()),",
+        "detail": "matriculas.migrations.0005_cad_spacepoint",
+        "documentation": {}
+    },
+    {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "matriculas.migrations.0006_metas",
+        "description": "matriculas.migrations.0006_metas",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('matriculas', '0005_cad_spacepoint'),\n    ]\n    operations = [\n        migrations.CreateModel(\n            name='Metas',\n            fields=[\n                ('id', models.AutoField(primary_key=True, serialize=False)),\n                ('meta', models.IntegerField()),",
+        "detail": "matriculas.migrations.0006_metas",
+        "documentation": {}
+    },
+    {
+        "label": "Migration",
+        "kind": 6,
+        "importPath": "matriculas.migrations.0007_cad_spacepoint_meta_pc",
+        "description": "matriculas.migrations.0007_cad_spacepoint_meta_pc",
+        "peekOfCode": "class Migration(migrations.Migration):\n    dependencies = [\n        ('matriculas', '0006_metas'),\n    ]\n    operations = [\n        migrations.AddField(\n            model_name='cad_spacepoint',\n            name='meta_pc',\n            field=models.IntegerField(default=0),\n            preserve_default=False,",
+        "detail": "matriculas.migrations.0007_cad_spacepoint_meta_pc",
+        "documentation": {}
+    },
+    {
         "label": "MatriculasAdmin",
         "kind": 6,
         "importPath": "matriculas.admin",
@@ -1266,6 +1381,24 @@
         "documentation": {}
     },
     {
+        "label": "SpacePointForm",
+        "kind": 6,
+        "importPath": "matriculas.forms",
+        "description": "matriculas.forms",
+        "peekOfCode": "class SpacePointForm(forms.ModelForm):\n    id_processos = forms.ModelChoiceField(queryset=cad_processo.objects.filter(ativo=True), widget=forms.Select(attrs={'class': 'form-select'}), label='Processo')\n    data_spacepoint = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}), label='Data do Checkpoint')\n    meta_pc = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control'}),label='Meta do Checkpoint em %')\n    ativo = forms.BooleanField(required=False)\n    def label_from_instance(self, obj):\n        return f\"{obj.numero_processo}  / {obj.ano_processo}\"\n    class Meta:\n        model = cad_spacepoint\n        fields = (",
+        "detail": "matriculas.forms",
+        "documentation": {}
+    },
+    {
+        "label": "MetasForm",
+        "kind": 6,
+        "importPath": "matriculas.forms",
+        "description": "matriculas.forms",
+        "peekOfCode": "class MetasForm(forms.ModelForm):\n    processo = forms.ModelChoiceField(queryset=cad_processo.objects.filter(ativo=True), widget=forms.Select(attrs={'class': 'form-select'}))\n    polo = forms.ModelChoiceField(queryset=cad_polos.objects.filter(active=True), widget=forms.Select(attrs={'class': 'form-select'}))\n    tipo_curso = forms.ModelChoiceField(queryset=tipo_curso.objects.filter(active=True), widget=forms.Select(attrs={'class': 'form-select'}))\n    meta = forms.IntegerField()\n    class Meta:\n        model = Metas\n        fields = (\n            'processo',\n            'polo',",
+        "detail": "matriculas.forms",
+        "documentation": {}
+    },
+    {
         "label": "MatriculasForm",
         "kind": 6,
         "importPath": "matriculas.forms",
@@ -1324,7 +1457,7 @@
         "kind": 6,
         "importPath": "matriculas.forms",
         "description": "matriculas.forms",
-        "peekOfCode": "class ProcessoForm(forms.ModelForm):\n    numero_processo = forms.CharField(widget=forms.Select(choices=NUMERO_PROC_CHOICES))\n    ano_processo = forms.IntegerField()\n    data_inicial_processo = forms.DateTimeField(widget=DateInput())\n    data_final_processo = forms.DateTimeField(widget=DateInput())\n    ativo = forms.BooleanField(required=False)\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.fields['ano_processo'].initial = datetime.now().year\n        self.fields['ativo'].initial = True",
+        "peekOfCode": "class ProcessoForm(forms.ModelForm):\n    numero_processo = forms.CharField(widget=forms.Select(choices=NUMERO_PROC_CHOICES, attrs={'class': 'form-select'}))\n    ano_processo = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control'}))\n    data_inicial_processo = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}))\n    data_final_processo = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}))\n    ativo = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check'}))\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.fields['ano_processo'].initial = datetime.now().year\n        self.fields['ativo'].initial = True",
         "detail": "matriculas.forms",
         "documentation": {}
     },
@@ -1378,7 +1511,7 @@
         "kind": 5,
         "importPath": "matriculas.forms",
         "description": "matriculas.forms",
-        "peekOfCode": "NUMERO_PROC_CHOICES = (\n    ('51', '51'),\n    ('52', '52'),\n    ('53', '53'),\n    ('54', '54'),\n    )   \nclass ProcessoForm(forms.ModelForm):\n    numero_processo = forms.CharField(widget=forms.Select(choices=NUMERO_PROC_CHOICES))\n    ano_processo = forms.IntegerField()\n    data_inicial_processo = forms.DateTimeField(widget=DateInput())",
+        "peekOfCode": "NUMERO_PROC_CHOICES = (\n    ('51', '51'),\n    ('52', '52'),\n    ('53', '53'),\n    ('54', '54'),\n    )   \nclass ProcessoForm(forms.ModelForm):\n    numero_processo = forms.CharField(widget=forms.Select(choices=NUMERO_PROC_CHOICES, attrs={'class': 'form-select'}))\n    ano_processo = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control'}))\n    data_inicial_processo = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}))",
         "detail": "matriculas.forms",
         "documentation": {}
     },
@@ -1433,6 +1566,24 @@
         "importPath": "matriculas.models",
         "description": "matriculas.models",
         "peekOfCode": "class cad_processo(models.Model):\n    NUMERO_PROCESSO_CHOICES = (\n    ('51', '51'),\n    ('52', '52'),\n    ('53', '53'),\n    ('54', '54'),\n    )   \n    numero_processo =  models.CharField(max_length=2, choices=NUMERO_PROCESSO_CHOICES)\n    ano_processo = models.CharField(max_length=4)\n    data_inicial_processo = models.DateTimeField()",
+        "detail": "matriculas.models",
+        "documentation": {}
+    },
+    {
+        "label": "cad_spacepoint",
+        "kind": 6,
+        "importPath": "matriculas.models",
+        "description": "matriculas.models",
+        "peekOfCode": "class cad_spacepoint(models.Model):\n    id = models.AutoField(primary_key=True)\n    id_processos = models.ForeignKey(cad_processo, on_delete=models.PROTECT)\n    data_spacepoint = models.DateTimeField()\n    meta_pc = models.IntegerField()\n    ativo = models.BooleanField(default=True)\n    class Meta: \n        db_table = 'spacepoint'\n    def __str__(self):\n        return self.id",
+        "detail": "matriculas.models",
+        "documentation": {}
+    },
+    {
+        "label": "Metas",
+        "kind": 6,
+        "importPath": "matriculas.models",
+        "description": "matriculas.models",
+        "peekOfCode": "class Metas(models.Model):\n    id = models.AutoField(primary_key=True)\n    processo = models.ForeignKey(cad_processo, on_delete=models.PROTECT)\n    polo = models.ForeignKey(cad_polos, on_delete=models.PROTECT)\n    tipo_curso = models.ForeignKey(tipo_curso, on_delete=models.PROTECT)\n    meta = models.IntegerField()\n    class Meta:\n        db_table = 'metas'\n    def __str__(self):\n        return self.id",
         "detail": "matriculas.models",
         "documentation": {}
     },
@@ -1540,7 +1691,7 @@
         "kind": 6,
         "importPath": "matriculas.views",
         "description": "matriculas.views",
-        "peekOfCode": "class TipoCursoListView(LoginRequiredMixin, ListView):\n    template_name = 'matriculas/tipo_curso_list.html'\n    model = tipo_curso\n    queryset = tipo_curso.objects.all()\n    paginate_by = 8\n    def get_queryset(self):\n        queryset = super().get_queryset()\n        search_query = self.request.GET.get('name', '')\n        if search_query:\n            # Filtra curso com base no nome",
+        "peekOfCode": "class TipoCursoListView(LoginRequiredMixin, ListView):\n    template_name = 'matriculas/tipo_curso_list.html'\n    model = tipo_curso\n    queryset = tipo_curso.objects.all().order_by('nome')\n    paginate_by = 8\n    def get_queryset(self):\n        queryset = super().get_queryset()\n        search_query = self.request.GET.get('name', '')\n        if search_query:\n            # Filtra curso com base no nome",
         "detail": "matriculas.views",
         "documentation": {}
     },
@@ -1549,7 +1700,25 @@
         "kind": 6,
         "importPath": "matriculas.views",
         "description": "matriculas.views",
-        "peekOfCode": "class ProcessoListView(LoginRequiredMixin, ListView):\n    template_name = 'matriculas/processo_list.html'\n    model = cad_processo\n    queryset = cad_processo.objects.all()\n    paginate_by = 8\n    def get_queryset(self):\n        queryset = super().get_queryset()\n        search_query = self.request.GET.get('name', '')\n        if search_query:\n            # Filtra processo com base no número ou ano",
+        "peekOfCode": "class ProcessoListView(LoginRequiredMixin, ListView):\n    template_name = 'matriculas/processo_list.html'\n    model = cad_processo\n    queryset = cad_processo.objects.all().order_by('-data_final_processo')\n    paginate_by = 8\n    def get_queryset(self):\n        queryset = super().get_queryset()\n        search_query = self.request.GET.get('name', '')\n        if search_query:\n            # Filtra processo com base no número ou ano",
+        "detail": "matriculas.views",
+        "documentation": {}
+    },
+    {
+        "label": "SpacePointListView",
+        "kind": 6,
+        "importPath": "matriculas.views",
+        "description": "matriculas.views",
+        "peekOfCode": "class SpacePointListView(LoginRequiredMixin, ListView):\n    template_name = 'matriculas/spacepoint_list.html'\n    model = cad_spacepoint\n    queryset = cad_spacepoint.objects.all().order_by('-data_spacepoint')\n    paginate_by = 8\n    def get_queryset(self):\n        queryset = super().get_queryset()\n        search_query = self.request.GET.get('name', '')\n        queryset = queryset.filter(id_processos__ativo=True)\n        if search_query:",
+        "detail": "matriculas.views",
+        "documentation": {}
+    },
+    {
+        "label": "MetasListView",
+        "kind": 6,
+        "importPath": "matriculas.views",
+        "description": "matriculas.views",
+        "peekOfCode": "class MetasListView(LoginRequiredMixin, ListView):\n    template_name = 'matriculas/metas_list.html'\n    model = Metas\n    queryset = Metas.objects.all()\n    paginate_by = 8\n    def get_queryset(self):\n        queryset = super().get_queryset()\n        search_query = self.request.GET.get('name', '')\n        queryset = queryset.filter(processo__ativo=True)\n        if search_query:",
         "detail": "matriculas.views",
         "documentation": {}
     },
@@ -1716,6 +1885,42 @@
         "documentation": {}
     },
     {
+        "label": "SpacepointNewView",
+        "kind": 6,
+        "importPath": "matriculas.views",
+        "description": "matriculas.views",
+        "peekOfCode": "class SpacepointNewView(LoginRequiredMixin, CreateView):\n    template_name = 'matriculas/spacepoint_new.html'\n    form_class = SpacePointForm\n    def form_valid(self, form):\n        return super().form_valid(form)\n    def get_success_url(self) -> str:\n        return reverse('matriculas:spacepoint_list')\n    def get_initial(self):\n        # Obtém o processo ativo (assumindo que você tem um campo 'ativo' em cad_processo)\n        processo_ativo = cad_processo.objects.filter(ativo=True).first()",
+        "detail": "matriculas.views",
+        "documentation": {}
+    },
+    {
+        "label": "SpacepointActivateView",
+        "kind": 6,
+        "importPath": "matriculas.views",
+        "description": "matriculas.views",
+        "peekOfCode": "class SpacepointActivateView(View):\n    def get(self, request, id):\n        processo = get_object_or_404(cad_processo, id=id)\n        processo.ativo = True\n        processo.save()\n        return RedirectView.as_view(url=reverse_lazy('matriculas:spacepoint_list'))(request)\nclass SpacePointDeactivateView(View):\n    def get(self, request, id):\n        processo = get_object_or_404(cad_processo, id=id)\n        processo.ativo = False",
+        "detail": "matriculas.views",
+        "documentation": {}
+    },
+    {
+        "label": "SpacePointDeactivateView",
+        "kind": 6,
+        "importPath": "matriculas.views",
+        "description": "matriculas.views",
+        "peekOfCode": "class SpacePointDeactivateView(View):\n    def get(self, request, id):\n        processo = get_object_or_404(cad_processo, id=id)\n        processo.ativo = False\n        processo.save()\n        return RedirectView.as_view(url=reverse_lazy('matriculas:spacepoint_list'))(request)\nclass MetasNewView(LoginRequiredMixin, CreateView):\n    template_name = 'matriculas/metas_new.html'\n    form_class = MetasForm\n    def get_success_url(self) -> str:",
+        "detail": "matriculas.views",
+        "documentation": {}
+    },
+    {
+        "label": "MetasNewView",
+        "kind": 6,
+        "importPath": "matriculas.views",
+        "description": "matriculas.views",
+        "peekOfCode": "class MetasNewView(LoginRequiredMixin, CreateView):\n    template_name = 'matriculas/metas_new.html'\n    form_class = MetasForm\n    def get_success_url(self) -> str:\n        return reverse('matriculas:metas_table')\n    def get_initial(self):\n        # Obtém o processo ativo (assumindo que você tem um campo 'ativo' em cad_processo)\n        processo_ativo = cad_processo.objects.filter(ativo=True).first()\n        # Inicializa o dicionário com os valores iniciais\n        initial = {",
+        "detail": "matriculas.views",
+        "documentation": {}
+    },
+    {
         "label": "MatriculasUpdateView",
         "kind": 6,
         "importPath": "matriculas.views",
@@ -1775,6 +1980,24 @@
         "importPath": "matriculas.views",
         "description": "matriculas.views",
         "peekOfCode": "class ProcessoUpdateView(LoginRequiredMixin, UpdateView):\n    template_name = 'matriculas/processo_new.html'\n    form_class = ProcessoForm\n    def get_object(self):\n        id = self.kwargs.get('id')\n        return get_object_or_404(cad_processo, id=id)  # Retorna o objeto consultor a partir do id\n    def form_valid(self, form):\n        return super().form_valid(form)\n    def get_success_url(self):\n        return reverse('matriculas:processo_list')",
+        "detail": "matriculas.views",
+        "documentation": {}
+    },
+    {
+        "label": "SpacepointUpdateView",
+        "kind": 6,
+        "importPath": "matriculas.views",
+        "description": "matriculas.views",
+        "peekOfCode": "class SpacepointUpdateView(LoginRequiredMixin, UpdateView):\n    template_name = 'matriculas/spacepoint_new.html'\n    form_class = SpacePointForm\n    def get_object(self):\n        id = self.kwargs.get('id')\n        return get_object_or_404(cad_spacepoint, id=id)  # Retorna o objeto consultor a partir do id\n    def form_valid(self, form):\n        return super().form_valid(form)\n    def get_success_url(self):\n        return reverse('matriculas:spacepoint_list')",
+        "detail": "matriculas.views",
+        "documentation": {}
+    },
+    {
+        "label": "MetasUpdateView",
+        "kind": 6,
+        "importPath": "matriculas.views",
+        "description": "matriculas.views",
+        "peekOfCode": "class MetasUpdateView(LoginRequiredMixin, UpdateView):\n    template_name = 'matriculas/metas_new.html'\n    form_class = MetasForm\n    def get_object(self):\n        id = self.kwargs.get('id')\n        return get_object_or_404(Metas, id=id)  # Retorna o objeto consultor a partir do id\n    def form_valid(self, form):\n        return super().form_valid(form)\n    def get_success_url(self):\n        return reverse('matriculas:metas_list')  ",
         "detail": "matriculas.views",
         "documentation": {}
     },
@@ -1887,6 +2110,24 @@
         "documentation": {}
     },
     {
+        "label": "MetasTableView",
+        "kind": 6,
+        "importPath": "matriculas.views",
+        "description": "matriculas.views",
+        "peekOfCode": "class MetasTableView(LoginRequiredMixin, View):\n    template_name = 'matriculas/metas_table.html'\n    def get(self, request, *args, **kwargs):\n        # Recupera os dados necessários do banco de dados\n        metas_data, tipos_curso = self.get_metas_data()\n        # Passa os dados para o contexto do template\n        context = {'metas_data': metas_data, 'tipos_curso': tipos_curso}\n        return render(request, self.template_name, context)\n    def get_metas_data(self):\n        metas_data = []",
+        "detail": "matriculas.views",
+        "documentation": {}
+    },
+    {
+        "label": "RelatorioMetasTableView",
+        "kind": 6,
+        "importPath": "matriculas.views",
+        "description": "matriculas.views",
+        "peekOfCode": "class RelatorioMetasTableView(LoginRequiredMixin, ListView):\n    template_name = 'matriculas/relatorio_metas_table.html'\n    model = Matriculas\n    def get(self, request, *args, **kwargs):\n        # Dados da primeira view\n        metas_data, tipos_curso = self.get_metas_data()\n        total_matriculas_dia = Matriculas.objects.filter(\n            processo_sel__in=self.get_processos_ativos()).count()\n        # Dados da segunda view\n        matriculas_por_polo = self.get_matriculas_por_polo()",
+        "detail": "matriculas.views",
+        "documentation": {}
+    },
+    {
         "label": "get_cursos",
         "kind": 2,
         "importPath": "matriculas.views",
@@ -1909,7 +2150,7 @@
         "kind": 2,
         "importPath": "matriculas.views",
         "description": "matriculas.views",
-        "peekOfCode": "def lista_processos(request):\n    # Filtra os processos ativos\n    processos_ativos = cad_processo.objects.filter(ativo=True)\n    # Passa a lista filtrada para o template\n    return render (request, 'matriculas/processo_ativo.html', {'processos': processos_ativos})     \n####################### UPDATE VIEWS ######################################################\nclass MatriculasUpdateView(LoginRequiredMixin, UpdateView):\n    template_name = 'matriculas/matriculas_update.html'\n    form_class = MatriculasForm\n    def get_object(self):",
+        "peekOfCode": "def lista_processos(request):\n    # Filtra os processos ativos\n    processos_ativos = cad_processo.objects.filter(ativo=True)\n    # Passa a lista filtrada para o template\n    return render (request, 'matriculas/processo_ativo.html', {'processos': processos_ativos})     \nclass SpacepointNewView(LoginRequiredMixin, CreateView):\n    template_name = 'matriculas/spacepoint_new.html'\n    form_class = SpacePointForm\n    def form_valid(self, form):\n        return super().form_valid(form)",
         "detail": "matriculas.views",
         "documentation": {}
     },

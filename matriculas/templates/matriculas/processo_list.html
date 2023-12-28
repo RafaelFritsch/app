@@ -5,6 +5,8 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 
 
+
+
 <div class="redenc mb-3 d-flex align-items-center text-center justify-content-between">
   <img src="{% static 'images/virtua_full.svg' %}" alt="Imagem" style="width: auto; height: 50px; margin-right: 10px;">
   <div class="mx-auto">
@@ -25,9 +27,9 @@
       </div>
   </div>
 </form>
-<div class="pt-4">
+<div>
   <a href="{% url 'matriculas:processo_new' %}"
-    <button type="button" class="btn btn-success" style="float: right; margin-bottom: 10px">Novo Processo</button>
+    <button type="button" class="btn btn-success mt-3" style="float: right; margin-bottom: 10px">Novo Processo</button>
   </a>
 </div>
 
@@ -35,7 +37,7 @@
     <thead>
         <tr>
           <th class="text-start align-middle">Numero</th>
-          <th class="text-center align-middle">Ano</th>
+          <th class="text-start align-middle">Ano</th>
           <th class="text-center align-middle">Data Inicial</th>
           <th class="text-center align-middle">Data Final</th>
           <th class="text-center align-middle">Ativo</th>
@@ -47,7 +49,7 @@
         {% for cad_processo in object_list %}
           <tr>
             <td class="text-start align-middle">{{cad_processo.numero_processo}}</td>
-            <td class="text-center align-middle">{{cad_processo.ano_processo}}</td>
+            <td class="text-start align-middle">{{cad_processo.ano_processo}}</td>
             <td class="text-center align-middle">{{cad_processo.get_data_inicial}}</td>
             <td class="text-center align-middle">{{cad_processo.get_data_final}}</td>
             <td class="text-center align-middle">
@@ -58,6 +60,8 @@
                     {% endif %}                         
               </td>
             <td class="text-end align-middle"><a href = "{{ cad_processo.get_absolute_url }}"><button type="button" class="btn btn-outline-primary btn-sm">Editar</button></td>
+              <td class="text-end align-middle"><a href ="{% url 'matriculas:metas_table' %}"><button type="button" class="btn btn-outline-warning btn-sm" data-ativo="{{ cad_processo.ativo }}">Metas</button></td>
+                <td class="text-start align-middle"><a href ="{% url 'matriculas:spacepoint_list' %}"><button type="button" class="btn btn-outline-secondary btn-sm" data-ativo="{{ cad_processo.ativo }}">Checkpoint</button></td>
               <!-- <form method="POST" action="{{ cad_processo.get_delete_url }}">{% csrf_token %}
                 <td class="text-end align-middle"><button type="submit" class="btn btn-danger">Excluir</button></td>
               </form> -->
@@ -109,4 +113,54 @@
     </ul>
   
 </div>
+
+
+<!-- Modal da lista de processos -->
+<div class="modal fade" id="metasModal" tabindex="-1" role="dialog" aria-labelledby="metasModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="metasModalLabel">Metas</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Conteúdo do modal, como a tabela de metas -->
+        <!-- Certifique-se de ajustar isso de acordo com a sua estrutura de dados -->
+        <table class="table table-striped table-hover table-sm">
+          <!-- ... (conteúdo da tabela de metas) ... -->
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Obtém a referência para todos os botões de Metas e Checkpoint
+    var metasButtons = document.querySelectorAll('.btn-outline-warning.btn-sm');
+    var checkpointButtons = document.querySelectorAll('.btn-outline-secondary.btn-sm');
+
+    // Itera sobre os botões e os oculta se o processo não estiver ativo
+    metasButtons.forEach(function(button) {
+      if (button.getAttribute('data-ativo') === 'False') {
+        button.style.display = 'none';
+      }
+    });
+
+    checkpointButtons.forEach(function(button) {
+      if (button.getAttribute('data-ativo') === 'False') {
+        button.style.display = 'none';
+      }
+    });
+  });
+</script>
+
+
+
 {% endblock %}

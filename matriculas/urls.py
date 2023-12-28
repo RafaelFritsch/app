@@ -24,6 +24,8 @@ urlpatterns = [
     path('polo/', PoloListView.as_view(), name='polo_list'),
     path('processo/', ProcessoListView.as_view(), name='processo_list'),
     path('file/<int:pk>/', MatriculaFileView.as_view(), name='matricula_file'), #Mostra o arquivo da matrícula
+    path('spacepoint/', SpacePointListView.as_view(), name='spacepoint_list'),
+    path('metas/', MetasListView.as_view(), name='metas_list'),
     
     #NewView
     path('', MatriculasNewView.as_view(), name='matriculas_new'),
@@ -33,6 +35,8 @@ urlpatterns = [
     path('tipocurso/novo', TipoCursoNewView.as_view(), name='tipo_curso_new'),
     path('campanhas/novo', CampanhaNewView.as_view(), name='campanha_new'),
     path('processo/novo', ProcessoNewView.as_view(), name='processo_new'),
+    path('spacepoint/novo', SpacepointNewView.as_view(), name='spacepoint_new'),
+    path('metas/nova', MetasNewView.as_view(), name='metas_new'),
     
     #UpdateView
     path('<int:id>/', MatriculasUpdateView.as_view(), name='matriculas_update'),
@@ -42,6 +46,8 @@ urlpatterns = [
     path('polo/<int:id>', PoloUpdateView.as_view(), name='polo_update'),
     path('processo/<int:id>', ProcessoUpdateView.as_view(), name='processo_update'),
     path('user_update/<int:id>/', UserUpdateView.as_view(), name='user_update'),
+    path('spacepoint/<int:id>', SpacepointUpdateView.as_view(), name='spacepoint_update'),
+    path('metas/<int:id>', MetasUpdateView.as_view(), name='metas_update'),
     
     #DeleteView
     path('<int:id>/delete', MatriculasDeleteView.as_view(), name='matriculas_delete'),
@@ -61,6 +67,8 @@ urlpatterns = [
     path('relatorios-spacepoint/', RelatorioSpace.as_view(), name='relatorio_spacepoint'),
     path('relatorios-campanha/', RelatorioCampanha.as_view(), name='relatorio_campanha'),
     path('user-profile/', UserProfileView.as_view(), name='user_profile'),
+    path('metas_table/', MetasTableView.as_view(), name='metas_table'),
+    path('relatorio-metas_table/', RelatorioMetasTableView.as_view(), name='relatorio-metas_table'),
     
     #Activate/Deactivate
     path('user/<int:id>/activate/', UserActivateView.as_view(), name='user_activate'),

@@ -1,4 +1,9 @@
+from collections.abc import Mapping
+from typing import Any
 from django import forms
+from django.core.files.base import File
+from django.db.models.base import Model
+from django.forms.utils import ErrorList
 from .models import *
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.models import User
@@ -39,9 +44,49 @@ class TipoCursoForm(forms.ModelForm):
             'active',
         )    
 
+class SpacePointForm(forms.ModelForm):
+    id_processos = forms.ModelChoiceField(queryset=cad_processo.objects.filter(ativo=True), widget=forms.Select(attrs={'class': 'form-select'}), label='Processo')
+    data_spacepoint = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}), label='Data do Checkpoint')
+    meta_pc = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control'}),label='Meta do Checkpoint em %')
+    ativo = forms.BooleanField(required=False)
+    
+    def label_from_instance(self, obj):
+        return f"{obj.numero_processo}  / {obj.ano_processo}"
+    class Meta:
+        model = cad_spacepoint
+        fields = (
+            'id_processos',
+            'data_spacepoint',
+            'meta_pc',
+            'ativo',
+        )
+    def __init__(self, *args, **kwargs):
+        super(SpacePointForm, self).__init__(*args, **kwargs)
+        self.fields['id_processos'].label_from_instance = self.label_from_instance
+        self.fields['id_processos'].label = 'Processo'  # Define um rótulo padrão
 
-
-
+class MetasForm(forms.ModelForm):
+    processo = forms.ModelChoiceField(queryset=cad_processo.objects.filter(ativo=True), widget=forms.Select(attrs={'class': 'form-select'}))
+    polo = forms.ModelChoiceField(queryset=cad_polos.objects.filter(active=True), widget=forms.Select(attrs={'class': 'form-select'}))
+    tipo_curso = forms.ModelChoiceField(queryset=tipo_curso.objects.filter(active=True), widget=forms.Select(attrs={'class': 'form-select'}))
+    meta = forms.IntegerField()
+    
+    class Meta:
+        model = Metas
+        fields = (
+            'processo',
+            'polo',
+            'tipo_curso',
+            'meta',
+        )
+        
+    def label_from_instance(self, obj):
+        return f"{obj.numero_processo} / {obj.ano_processo}"
+    
+    def __init__(self, *args, **kwargs):
+        super(MetasForm, self).__init__(*args, **kwargs)
+        self.fields['processo'].label_from_instance = self.label_from_instance  # Define um rótulo padrão
+       
 
 class MatriculasForm(forms.ModelForm):
     data_matricula = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}))
@@ -217,11 +262,11 @@ NUMERO_PROC_CHOICES = (
     
               
 class ProcessoForm(forms.ModelForm):
-    numero_processo = forms.CharField(widget=forms.Select(choices=NUMERO_PROC_CHOICES))
-    ano_processo = forms.IntegerField()
-    data_inicial_processo = forms.DateTimeField(widget=DateInput())
-    data_final_processo = forms.DateTimeField(widget=DateInput())
-    ativo = forms.BooleanField(required=False)
+    numero_processo = forms.CharField(widget=forms.Select(choices=NUMERO_PROC_CHOICES, attrs={'class': 'form-select'}))
+    ano_processo = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    data_inicial_processo = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}))
+    data_final_processo = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}))
+    ativo = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check'}))
     
     
     def __init__(self, *args, **kwargs):

@@ -1,0 +1,113 @@
+{% extends 'model-page.html'%}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+<div class="redenc mb-3 d-flex align-items-center text-center justify-content-between">
+  <img src="{% static 'images/virtua_full.svg' %}" alt="Imagem" style="width: auto; height: 50px; margin-right: 10px;">
+  <div class="mx-auto">
+      <div class="d-flex">
+          <h1>METAS</h1> 
+      </div>
+  </div>
+  <img src="{% static 'images/branco.svg' %}" alt="" style="width: auto; height: 50px; margin-right: 10px;">
+</div>
+<div style="scale: 0.96;">
+  <div>
+
+    <a href="{% url 'matriculas:metas_list' %}"
+    <button type="button" class="btn btn-primary mb-3 ms-4" style="float: right; margin-bottom: 10px">Editar Metas</button>
+  </a>
+  <a href="{% url 'matriculas:metas_new' %}"
+  <button type="button" class="btn btn-success mb-3 " style="float: right; margin-bottom: 10px">Nova Meta</button>
+</a>
+  </div>
+
+<table class="table table-striped table-hover table-sm " id="metas-table">
+  <thead>
+      <tr>
+          <th class="text-start align-middle">Polo</th>
+          {% for tipo_curso in tipos_curso %}
+              <th class="text-center align-middle">{{ tipo_curso.nome }}</th>
+          {% endfor %}
+          <th class="text-center align-middle">Total</th>
+      </tr>
+  </thead>
+  <tbody>
+      {% for meta_data in metas_data %}
+          <tr>
+              <td class="text-start align-middle">{{ meta_data.polo }}</td>
+              {% for tipo_curso, meta_value in meta_data.meta_por_tipo_curso.items %}
+                  <td class="text-center align-middle">{{ meta_value }}</td>
+              {% endfor %}
+              <td class="text-center align-middle"><strong>{{ meta_data.total_metas }}</strong></td>
+          </tr>
+      {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr id="somatorio-row">
+        <td class="text-start align-middle"><strong>TOTAL</strong></td>
+        {% for tipo_curso in tipos_curso %}
+            <td class="text-center align-middle somatorio-coluna" data-tipo-curso="{{ tipo_curso.nome }}"></td>
+        {% endfor %}
+        <td class="text-center align-middle" id="somatorio-total"></td>
+    </tr>
+</tfoot>
+</table>
+
+</div>
+
+<script>
+  $(document).ready(function() {
+      // Função para calcular o somatório das colunas e exibir na última linha
+      function calcularSomatorioColunas() {
+          $('#metas-table tbody tr').each(function() {
+              $(this).find('td').each(function(coluna) {
+                  if (coluna !== 0) {  // Ignora a primeira célula (nome do polo)
+                      var valor = parseInt($(this).text()) || 0;
+                      var somatorio = $('#somatorio-row .somatorio-coluna').eq(coluna - 1).data('valor') || 0;
+                      somatorio += valor;
+                      $('#somatorio-row .somatorio-coluna').eq(coluna - 1).data('valor', somatorio);
+                  }
+              });
+          });
+  
+          // Atualiza os valores na linha de somatório
+          $('#somatorio-row .somatorio-coluna').each(function() {
+              var somatorio = $(this).data('valor') || 0;
+              $(this).text(somatorio).css('font-weight', 'bold');
+          });
+        
+          $('#somatorio-row .somatorio-total').text(totalGeral).css('font-weight', 'bold');
+      }
+  
+   
+      calcularSomatorioColunas();
+  });
+  </script>
+
+<script>
+  $(document).ready(function() {
+    // Função para calcular o somatório da coluna e exibir na última linha da tabela
+    function calcularSomatorio() {
+      var totalSomatorio = 0;
+
+      // Iterar sobre as células da coluna
+      $('#metas-table tbody tr').each(function() {
+        var valorCelula = parseInt($(this).find('td:last').text()) || 0;
+        totalSomatorio += valorCelula;
+      });
+
+      $('#somatorio-total').text(totalSomatorio).css('font-weight', 'bold');
+    }
+
+
+    calcularSomatorio();
+  });
+</script>
+
+
+{% endblock %}
