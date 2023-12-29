@@ -2123,7 +2123,16 @@
         "kind": 6,
         "importPath": "matriculas.views",
         "description": "matriculas.views",
-        "peekOfCode": "class RelatorioMetasTableView(LoginRequiredMixin, ListView):\n    template_name = 'matriculas/relatorio_metas_table.html'\n    model = Matriculas\n    def get(self, request, *args, **kwargs):\n        # Dados da primeira view\n        metas_data, tipos_curso = self.get_metas_data()\n        total_matriculas_dia = Matriculas.objects.filter(\n            processo_sel__in=self.get_processos_ativos()).count()\n        # Dados da segunda view\n        matriculas_por_polo = self.get_matriculas_por_polo()",
+        "peekOfCode": "class RelatorioMetasTableView(LoginRequiredMixin, ListView):\n    template_name = 'matriculas/relatorio_metas_table.html'\n    model = Matriculas\n    def get(self, request, *args, **kwargs):\n        # Dados da primeira view  - total_matriculas_dia RETORNA SOMA TOTAL DE MATRICULAS REALIZADAS\n        metas_data, tipos_curso = self.get_metas_data()\n        total_matriculas_dia = Matriculas.objects.filter(\n            processo_sel__in=self.get_processos_ativos()).count()\n        # Dados da segunda view\n        matriculas_por_polo = self.get_matriculas_por_polo()",
+        "detail": "matriculas.views",
+        "documentation": {}
+    },
+    {
+        "label": "RelatorioCheckpointView",
+        "kind": 6,
+        "importPath": "matriculas.views",
+        "description": "matriculas.views",
+        "peekOfCode": "class RelatorioCheckpointView(LoginRequiredMixin, ListView):\n    template_name = 'matriculas/relatorio_checkpoint.html'\n    model = Matriculas\n    def get(self, request, *args, **kwargs):\n        # Dados da primeira view\n        metas_data, tipos_curso, total_geral_metas = self.get_metas_data()\n        total_matriculas_dia = Matriculas.objects.filter(\n            processo_sel__in=self.get_processos_ativos()).count()\n        matriculas_por_total = (total_matriculas_dia / total_geral_metas) * 100\n        # Dados da segunda view",
         "detail": "matriculas.views",
         "documentation": {}
     },

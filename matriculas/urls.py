@@ -69,6 +69,7 @@ urlpatterns = [
     path('user-profile/', UserProfileView.as_view(), name='user_profile'),
     path('metas_table/', MetasTableView.as_view(), name='metas_table'),
     path('relatorio-metas_table/', RelatorioMetasTableView.as_view(), name='relatorio-metas_table'),
+    path('relatorio-checkpoint/', RelatorioCheckpointView.as_view(), name='relatorio-checkpoint'),
     
     #Activate/Deactivate
     path('user/<int:id>/activate/', UserActivateView.as_view(), name='user_activate'),

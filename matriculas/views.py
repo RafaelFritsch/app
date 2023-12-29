@@ -712,9 +712,9 @@ class MetasUpdateView(LoginRequiredMixin, UpdateView):
     
     
 
-#TODO: PROCESSOS - Parada no formuárlio de NOVO PROCESSO - melhorar o layout
-
-#TODO: PROCESSOS - ina tela de cadastro de checkpoint mostrar os checkpoints cadastrados
+#TODO: CADASTRO DE PROCESSOS -  melhorar o layout
+#TODO: PROCESSOS: Criar maneira de consultar / Editar o Processo de acordo com Numero e Ano
+#TODO: PROCESSOS - na tela de cadastro de checkpoint mostrar os checkpoints cadastrados
 # DELETE VIEWS ######################################################
 
 class MatriculasDeleteView(LoginRequiredMixin, DeleteView): 
@@ -1077,7 +1077,7 @@ class RelatorioFinanceiro(LoginRequiredMixin,FormView, ListView):
 
         return context
  
-#TODO: Fazer margin botton no relatório matriculas x consultor para descolar do final da página
+
 #TODO: RELATORIO SPACEPOINT : INCLUIR SPACEPOINT NO RESUMO MENSAL 
 #TODO: Criar um darkmode para o site
 #TODO: Criar metodo para retirar os pontos
@@ -1420,11 +1420,11 @@ class RelatorioMetasTableView(LoginRequiredMixin, ListView):
     model = Matriculas
 
     def get(self, request, *args, **kwargs):
-        # Dados da primeira view
+        # Dados da primeira view  - total_matriculas_dia RETORNA SOMA TOTAL DE MATRICULAS REALIZADAS
         metas_data, tipos_curso = self.get_metas_data()
         total_matriculas_dia = Matriculas.objects.filter(
             processo_sel__in=self.get_processos_ativos()).count()
-        
+       
         # Dados da segunda view
         matriculas_por_polo = self.get_matriculas_por_polo()
         matriculas_por_usuario_com_polo = self.get_matriculas_por_usuario_com_polo()
@@ -1459,9 +1459,9 @@ class RelatorioMetasTableView(LoginRequiredMixin, ListView):
             metas_data.append({
                 'polo': polo.nome,
                 'meta_por_tipo_curso': meta_por_tipo_curso,
-                'total_metas': total_metas,
+                'total_metas': total_metas, # Fazer o somatório das metas
             })
-
+            
         return metas_data, tipos_curso
 
     def get_processos_ativos(self):
@@ -1489,6 +1489,136 @@ class RelatorioMetasTableView(LoginRequiredMixin, ListView):
                     tipo_curso=tipo,
                     processo_sel__in=processos_seletivos_ativos,
                 ).aggregate(total=Count('id'))['total']
+                
+        return matriculas_por_polo
+
+    def get_matriculas_por_usuario_com_polo(self):
+        matriculas_por_usuario_com_polo = (
+            Matriculas.objects
+            .values('usuario__userprofile__polo__nome')
+            .annotate(total=Count('id'))
+        )
+        return matriculas_por_usuario_com_polo
+    
+    
+class RelatorioCheckpointView(LoginRequiredMixin, ListView):
+    template_name = 'matriculas/relatorio_checkpoint.html'
+    model = Matriculas
+
+    def get(self, request, *args, **kwargs):
+        # Dados da primeira view
+        metas_data, tipos_curso, total_geral_metas = self.get_metas_data()
+        total_matriculas_dia = Matriculas.objects.filter(
+            processo_sel__in=self.get_processos_ativos()).count()
+        
+        matriculas_por_total = (total_matriculas_dia / total_geral_metas) * 100
+        # Dados da segunda view
+        matriculas_por_polo = self.get_matriculas_por_polo()
+        matriculas_por_usuario_com_polo = self.get_matriculas_por_usuario_com_polo()
+
+        spacepoint_data = self.get_spacepoint_data()
+         # Cálculo do ritmo
+        ritmo = self.calcular_ritmo(total_matriculas_dia)
+        ritmo_polo = self.calcular_ritmo_polo(matriculas_por_polo)
+        # Cálculo do ritmo_meta
+        ritmo_meta = self.calcular_ritmo_meta(total_geral_metas)
+        
+        
+        
+        context = {
+            'metas_data': metas_data,
+            'tipos_curso': tipos_curso,
+            'total_geral_metas': total_geral_metas,
+            'total_matriculas_dia': total_matriculas_dia,
+            'matriculas_por_polo': matriculas_por_polo,
+            'matriculas_por_usuario_com_polo': matriculas_por_usuario_com_polo,
+            'matriculas_por_total': matriculas_por_total,
+            'spacepoint_data': spacepoint_data,
+            'ritmo': ritmo,
+            'ritmo_meta': ritmo_meta,
+            'ritmo_polo': ritmo_polo,
+            
+        }
+        
+        return render(request, self.template_name, context)
+
+    def get_metas_data(self):
+        metas_data = []
+        polos = cad_polos.objects.filter(active=True).order_by('nome')
+        tipos_curso = tipo_curso.objects.filter(active=True).order_by('nome')
+
+        for polo in polos:
+            processos_ativos = cad_processo.objects.filter(ativo=True)
+            meta_por_tipo_curso = {tipo.nome: 0 for tipo in tipos_curso}
+
+            for processo in processos_ativos:
+                metas_polo = Metas.objects.filter(polo=polo, processo=processo)
+
+                for meta in metas_polo:
+                    meta_por_tipo_curso[meta.tipo_curso.nome] += meta.meta
+
+            total_metas = sum(meta_por_tipo_curso.values())
+
+            metas_data.append({
+                'polo': polo.nome,
+                'meta_por_tipo_curso': meta_por_tipo_curso,
+                'total_metas': total_metas,
+            })
+            
+            total_geral_metas = sum(entry['total_metas'] for entry in metas_data)
+            for entry in metas_data:
+                entry['total_geral_metas'] = total_geral_metas
+                
+            print(total_metas)
+              
+        return metas_data, tipos_curso, total_geral_metas
+
+    def get_processos_ativos(self):
+        return cad_processo.objects.filter(ativo=True)
+
+    def get_matriculas_por_polo(self):
+        processos_seletivos_ativos = cad_processo.objects.filter(ativo=True)
+        matriculas_por_polo = {}
+
+        for polo in cad_polos.objects.all().order_by('nome'):
+            total_metas_polo = sum(entry['total_metas'] for entry in self.get_metas_data()[0] if entry['polo'] == polo.nome)
+
+            # Adicione a variável ritmo_polo_meta
+            ritmo_polo_meta = 0
+
+            if total_metas_polo > 0:
+                # Calcular o número de dias entre a data final e inicial do processo_sel
+                processo_ativo = self.get_processos_ativos().first()
+                dias_entre_datas = (processo_ativo.data_final_processo - processo_ativo.data_inicial_processo).days
+
+                # Evitar a divisão por zero
+                if dias_entre_datas > 0:
+                    ritmo_polo_meta = total_metas_polo / dias_entre_datas
+
+            matriculas_por_polo[polo.id] = {
+                'polo': polo,
+                'total': Matriculas.objects.filter(
+                    usuario__userprofile__polo=polo,
+                    processo_sel__in=processos_seletivos_ativos,
+                ).aggregate(total=Count('id'))['total'],
+                'somatorio_tipo_curso': {},
+                'percentual_metas': 0,
+                'ritmo_polo_meta': ritmo_polo_meta,  # Adicione esta variável
+            }
+
+            tipos_de_curso = tipo_curso.objects.all().order_by('nome')
+
+            for tipo in tipos_de_curso:
+                matriculas_por_polo[polo.id]['somatorio_tipo_curso'][tipo.id] = Matriculas.objects.filter(
+                    usuario__userprofile__polo=polo,
+                    tipo_curso=tipo,
+                    processo_sel__in=processos_seletivos_ativos,
+                ).aggregate(total=Count('id'))['total']
+
+            if total_metas_polo > 0:
+                matriculas_por_polo[polo.id]['percentual_metas'] = (
+                    matriculas_por_polo[polo.id]['total'] / total_metas_polo
+                ) * 100
 
         return matriculas_por_polo
 
@@ -1499,3 +1629,81 @@ class RelatorioMetasTableView(LoginRequiredMixin, ListView):
             .annotate(total=Count('id'))
         )
         return matriculas_por_usuario_com_polo
+    
+    def get_spacepoint_data(self):
+        processos_ativos = self.get_processos_ativos()
+        
+        spacepoint_data = cad_spacepoint.objects.filter(
+            id_processos__in=processos_ativos,
+            ativo=True
+        ).values(
+            'id_processos__numero_processo',
+            'id_processos__ano_processo',
+            'data_spacepoint',
+            'meta_pc',
+            'id_processos__data_inicial_processo',
+            'id_processos__data_final_processo',
+        ).order_by('data_spacepoint')[:10]  # Ajuste o número conforme necessário
+        
+        return spacepoint_data
+
+    def calcular_ritmo(self, total_matriculas_dia):
+        # Obtendo a data inicial do processo ativo
+        processo_ativo = self.get_processos_ativos().first()
+        data_inicial_processo = processo_ativo.data_inicial_processo
+
+        # Calculando o número de dias entre a data inicial e o dia atual
+        dias_entre_datas = (timezone.now() - data_inicial_processo).days
+
+        # Evitando a divisão por zero
+        if dias_entre_datas > 0:
+            ritmo = total_matriculas_dia / dias_entre_datas
+        else:
+            ritmo = 0
+
+        return ritmo
+    
+    def calcular_ritmo_meta(self, total_geral_metas):
+        # Obtendo a data inicial e final do processo ativo
+        processo_ativo = self.get_processos_ativos().first()
+        data_inicial_processo = processo_ativo.data_inicial_processo
+        data_final_processo = processo_ativo.data_final_processo
+
+        # Calculando o número de dias entre a data inicial e final
+        dias_entre_datas = (data_final_processo - data_inicial_processo).days
+
+        # Evitando a divisão por zero
+        if dias_entre_datas > 0:
+            ritmo_meta = total_geral_metas / dias_entre_datas
+        else:
+            ritmo_meta = 0
+
+        return ritmo_meta
+    
+    def calcular_ritmo_polo(self, matriculas_por_polo):
+        # Obtendo a data inicial do processo ativo
+        processo_ativo = self.get_processos_ativos().first()
+        data_inicial_processo = processo_ativo.data_inicial_processo
+
+        # Calculando o número de dias entre a data inicial e o dia atual
+        dias_entre_datas = (timezone.now() - data_inicial_processo).days
+
+        ritmo_polo = []
+
+        for polo_id, matriculas in matriculas_por_polo.items():
+            # Evitando a divisão por zero
+            if dias_entre_datas > 0:
+                # Calculando o ritmo por polo
+                ritmo_polo.append({
+                    'polo_nome': matriculas['polo'].nome,
+                    'ritmo': matriculas['total'] / dias_entre_datas,
+                })
+            else:
+                ritmo_polo.append({
+                    'polo_nome': matriculas['polo'].nome,
+                    'ritmo': 0,
+                })
+
+        return ritmo_polo
+    
+  
